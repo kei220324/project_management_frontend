@@ -61,18 +61,18 @@ export default function ProjectListPage() {
           </thead>
 
           <tbody>
-            {dummyProjects.map((p) => (
-              <tr key={p.id}>
+            {dummyProjects.map((project) => (
+              <tr key={project.id}>
                 <td className="projectCell">
                   <a className="projectLink" href="#">
-                    {p.name}
+                    {project.name}
                   </a>
                 </td>
 
-                <td className="summaryCell">{p.summary}</td>
-                <td className="statusCell">{p.status}</td>
-                <td className="dueCell">{p.dueDate}</td>
-                <td className="progressCell">{p.progress}%</td>
+                <td className="summaryCell">{project.summary}</td>
+                <td className="statusCell">{project.status}</td>
+                <td className="dueCell">{project.dueDate}</td>
+                <td className="progressCell">{project.progress}%</td>
               </tr>
             ))}
           </tbody>
