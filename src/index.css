@@ -1,68 +1,128 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
   min-height: 100vh;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* 背景 */
+.page {
+  min-height: 100vh;
+  padding: 56px 16px;
+  background: #ffffff;
+  color: #111827;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+/* 外枠カード */
+.card {
+  max-width: 1040px;
+  margin: 0 auto;
+  background: #ffffff;
+  border: 1px solid #e6eef8;
+  border-radius: 12px;
+  box-shadow: 0 0 0 1px rgba(10, 37, 64, 0.02);
+  overflow: hidden;
+}
+
+/* ヘッダー */
+.cardHeader {
+  padding: 28px 28px 20px;
+  border-bottom: 1px solid #e6eef8;
+}
+
+.title {
+  margin: 0 0 18px;
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+/* 新規ボタン */
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+
+  background-color: #1d4ed8;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.primaryButton:hover {
+  background-color: #1e40af;
+}
+
+.plus {
+  margin-top: -2px;
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* テーブル */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.table thead th {
+  padding: 18px 22px;
+  background: #ffffff;
+  border-bottom: 1px solid #e6eef8;
+
+  text-align: left;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.table tbody td {
+  padding: 18px 22px;
+  border-bottom: 1px solid #eef3fb;
+
+  font-size: 18px;
+  vertical-align: middle;
+}
+
+.table tbody tr:hover {
+  background: #f8fbff;
+}
+
+/* 列幅 */
+.colProject {
+  width: 24%;
+}
+
+.colSummary {
+  width: 36%;
+}
+
+.colStatus {
+  width: 16%;
+}
+
+.colDue {
+  width: 14%;
+}
+
+.colProgress {
+  width: 10%;
+}
+
+/* プロジェクト名 */
+.projectLink {
+  color: #1d4ed8;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.projectLink:hover {
+  text-decoration: underline;
+}
+
+.projectText {
+  font-weight: 700;
 }
