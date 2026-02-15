@@ -1,42 +1,18 @@
-import React from "react";
-
-const dummyProjects = [
-  {
-    id: 1,
-    name: "Python",
-    summary: "機械学習の基礎を学ぶ",
-    status: "未着手",
-    dueDate: "2024/05/15",
-    progress: 0,
-    isLink: true,
-  },
-  {
-    id: 2,
-    name: "ネットワーク",
-    summary: "TCP/IPの理解を深める",
-    status: "進行中",
-    dueDate: "2024/04/30",
-    progress: 60,
-  },
-  {
-    id: 3,
-    name: "Laravel",
-    summary: "Webアプリケーション",
-    status: "完了",
-    dueDate: "2024/06/10",
-    progress: 100,
-  },
-  {
-    id: 4,
-    name: "フロントエンド",
-    summary: "Reactの学習を進める",
-    status: "進行中",
-    dueDate: "2024/05/20",
-    progress: 30,
-  },
-];
+import React, { useEffect, useState } from "react";
 
 export default function ProjectListPage() {
+  const [projects, setProjects] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost/api/projects")
+      .then((res) => res.json())
+      .then((data) => setProjects(data))
+      .catch((err) => console.error(err));
+      
+  }, []);
+
+
+
   return (
     <div className="page">
       <div className="card">
@@ -61,7 +37,7 @@ export default function ProjectListPage() {
           </thead>
 
           <tbody>
-            {dummyProjects.map((project) => (
+            {projects.map((project) => (
               <tr key={project.id}>
                 <td className="projectCell">
                   <a className="projectLink" href="#">
@@ -71,8 +47,10 @@ export default function ProjectListPage() {
 
                 <td className="summaryCell">{project.summary}</td>
                 <td className="statusCell">{project.status}</td>
-                <td className="dueCell">{project.dueDate}</td>
-                <td className="progressCell">{project.progress}%</td>
+                <td className="dueCell">{project.due_date}</td>
+                <td className="progressCell">
+                  {project.progress_percent}%
+                </td>
               </tr>
             ))}
           </tbody>
