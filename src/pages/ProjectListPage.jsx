@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import "./ProjectListPage.css";
 
 export default function ProjectListPage() {
   const [projects, setProjects] = useState([]);
@@ -8,10 +10,7 @@ export default function ProjectListPage() {
       .then((res) => res.json())
       .then((data) => setProjects(data))
       .catch((err) => console.error(err));
-      
   }, []);
-
-
 
   return (
     <div className="page">
@@ -40,17 +39,15 @@ export default function ProjectListPage() {
             {projects.map((project) => (
               <tr key={project.id}>
                 <td className="projectCell">
-                  <a className="projectLink" href="#">
+                  <Link className="projectLink" to={`/projects/${project.id}`}>
                     {project.name}
-                  </a>
+                  </Link>
                 </td>
 
                 <td className="summaryCell">{project.summary}</td>
                 <td className="statusCell">{project.status}</td>
                 <td className="dueCell">{project.due_date}</td>
-                <td className="progressCell">
-                  {project.progress_percent}%
-                </td>
+                <td className="progressCell">{project.progress_percent}%</td>
               </tr>
             ))}
           </tbody>
