@@ -1,36 +1,77 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import "./ProjectDetailPage.css";
 
 export default function ProjectDetailPage() {
-  // モックデータ（見た目のみの実装）
-  const project = {
-    id: 1,
-    name: "Python",
-    summary: "機械学習のノウハウを学ぶ",
-    due_date: "2024年5月31日",
-    progress_percent: 60,
+  const { projectId } = useParams();
+
+  const [project, setProject] = useState(null);
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchProject = async () => {
+      try {
+    
+
+        const res = await fetch(`http://localhost/api/projects/${projectId}`);
+
+        if (!res.ok) {
+          throw new Error("プロジェクトの取得に失敗しました");
+        }
+
+        const data = await res.json();
+
+        setProject(data);
+        setTasks(data.tasks ?? []);
+      } catch (e) {
+        setError(e.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProject();
+  }, [projectId]);
+
+  const getTaskStatusLabel = (task) => {
+    if (task.is_done) return "完了";
+    return "未完了";
   };
 
-  const tasks = [
-    { id: 1, name: "データ収集", status: "未着手", due_date: "2024年5月31日" },
-    { id: 2, name: "前処理", status: "進行中", due_date: "2024年5月31日" },
-    { id: 3, name: "モデル構築", status: "進行中", due_date: "2024年5月31日" },
-    { id: 4, name: "評価", status: "完了", due_date: "2024年5月31日" },
-    {
-      id: 5,
-      name: "ドキュメント作成",
-      status: "完了",
-      due_date: "2024年5月31日",
-    },
-  ];
-
-  const getStatusClass = (status) => {
-    console.log(status);
-    if (status === "完了") return "statusBadge statusCompleted";
-    if (status === "進行中") return "statusBadge statusInProgress";
+  const getTaskStatusClass = (task) => {
+    if (task.is_done) return "statusBadge statusCompleted";
     return "statusBadge statusNotStarted";
   };
+
+  if (loading) {
+  return (
+    <div className="page">
+      <p>読み込み中...</p>
+    </div>
+  );
+}
+
+
+  if (error || !project) {
+    return (
+      <div className="page">
+        <div className="card detailCard">
+          <div className="projectInfoHeader">
+            <div className="projectInfoContent">
+              <p>{error ?? "プロジェクトが見つかりませんでした。"}</p>
+              <Link to="/projects" className="backLink">
+                プロジェクト一覧に戻る
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const progressPercent = project.progress_percent ?? 0;
 
   return (
     <div className="page">
@@ -56,7 +97,7 @@ export default function ProjectDetailPage() {
               <div className="progressBar">
                 <div
                   className="progressBarFill"
-                  style={{ width: `${project.progress_percent}%` }}
+                  style={{ width: `${progressPercent}%` }}
                 ></div>
               </div>
             </div>
@@ -89,9 +130,13 @@ export default function ProjectDetailPage() {
             <tbody>
               {tasks.map((task) => (
                 <tr key={task.id}>
-                  <td>{task.name}</td>
-                  <td>{task.status}</td>
-                  <td>{task.due_date}</td>
+                  <td className="taskNameCell">{task.name}</td>
+                  <td className="taskStatusCell">
+                    <span className={getTaskStatusClass(task)}>
+                      {getTaskStatusLabel(task)}
+                    </span>
+                  </td>
+                  <td className="taskDueCell">{task.due_date}</td>
                   <td className="taskActionCell">
                     <button className="editTaskButton" type="button">
                       ✏️
@@ -106,3 +151,5 @@ export default function ProjectDetailPage() {
     </div>
   );
 }
+
+
