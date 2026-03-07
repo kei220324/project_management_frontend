@@ -75,3 +75,12 @@
 .projectText {
   font-weight: 700;
 }
+
+.successMessage {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #e8f7ee;
+  color: #1f7a4a;
+  font-weight: 700;
+}

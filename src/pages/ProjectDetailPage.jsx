@@ -1,21 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import "./ProjectDetailPage.css";
 
 export default function ProjectDetailPage() {
   const { projectId } = useParams();
+  const navigate = useNavigate();
 
   const [project, setProject] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
+
+  const projectApiUrl = `http://localhost/api/projects/${projectId}`;
 
   useEffect(() => {
     const fetchProject = async () => {
       try {
-    
-
-        const res = await fetch(`http://localhost/api/projects/${projectId}`);
+        const res = await fetch(projectApiUrl);
 
         if (!res.ok) {
           throw new Error("プロジェクトの取得に失敗しました");
@@ -33,7 +37,43 @@ export default function ProjectDetailPage() {
     };
 
     fetchProject();
-  }, [projectId]);
+  }, [projectApiUrl]);
+
+  const openDeleteModal = () => {
+    setDeleteError(null);
+    setIsDeleteModalOpen(true);
+  };
+
+  const closeDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setDeleteError(null);
+  };
+
+  const handleDelete = async () => {
+    if (isDeleting) return;
+
+    setIsDeleting(true);
+    setDeleteError(null);
+
+    try {
+      const res = await fetch(projectApiUrl, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        throw new Error("削除に失敗しました");
+      }
+
+      setIsDeleteModalOpen(false);
+      navigate("/projects", {
+        state: { message: "プロジェクトを削除しました" },
+      });
+    } catch (e) {
+      setDeleteError(e.message);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const getTaskStatusLabel = (task) => {
     if (task.is_done) return "完了";
@@ -46,13 +86,12 @@ export default function ProjectDetailPage() {
   };
 
   if (loading) {
-  return (
-    <div className="page">
-      <p>読み込み中...</p>
-    </div>
-  );
-}
-
+    return (
+      <div className="page">
+        <p>読み込み中...</p>
+      </div>
+    );
+  }
 
   if (error || !project) {
     return (
@@ -89,28 +128,60 @@ export default function ProjectDetailPage() {
           <div className="projectInfoContent">
             <h2 className="projectName">{project.name}</h2>
             <p className="projectSummary">{project.summary}</p>
+
             <div className="projectMeta">
               <span className="metaLabel">締切日</span>
               <span className="metaValue">{project.due_date}</span>
             </div>
+
             <div className="progressContainer">
               <div className="progressBar">
                 <div
                   className="progressBarFill"
                   style={{ width: `${progressPercent}%` }}
-                ></div>
+                />
               </div>
             </div>
           </div>
+
           <div className="projectActions">
             <button className="actionButton" type="button">
               <span className="actionIcon">✏️</span>
               編集
             </button>
-            <button className="actionButton" type="button">
+            <button
+              onClick={openDeleteModal}
+              className="actionButton"
+              type="button"
+            >
               <span className="actionIcon">🗑️</span>
               削除
             </button>
+
+            {isDeleteModalOpen && (
+              <div className="modalOverlay">
+                <div className="modal">
+                  <p>本当に削除しますか？</p>
+                  {deleteError && <p className="modalError">{deleteError}</p>}
+                  <div className="modalActions">
+                    <button
+                      type="button"
+                      onClick={closeDeleteModal}
+                      disabled={isDeleting}
+                    >
+                      キャンセル
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleDelete}
+                      disabled={isDeleting}
+                    >
+                      {isDeleting ? "削除中..." : "OK"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -151,5 +222,3 @@ export default function ProjectDetailPage() {
     </div>
   );
 }
-
-

@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./ProjectListPage.css";
 
 export default function ProjectListPage() {
   const [projects, setProjects] = useState([]);
+  const [flashMessage, setFlashMessage] = useState("");
+
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch("http://localhost/api/projects")
@@ -12,9 +16,24 @@ export default function ProjectListPage() {
       .catch((err) => console.error(err));
   }, []);
 
+  useEffect(() => {
+    const message = location.state?.message;
+
+    if (!message) return;
+
+    setFlashMessage(message);
+
+    navigate(location.pathname, {
+      replace: true,
+      state: null,
+    });
+  }, [location.state, location.pathname, navigate]);
+
   return (
     <div className="page">
       <div className="card">
+        {flashMessage && <p className="successMessage">{flashMessage}</p>}
+
         <header className="cardHeader">
           <h1 className="title">プロジェクト管理</h1>
 
