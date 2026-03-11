@@ -37,10 +37,10 @@ export default function ProjectListPage() {
         <header className="cardHeader">
           <h1 className="title">プロジェクト管理</h1>
 
-          <button className="primaryButton" type="button">
-            <span className="plus">＋</span>
-            新規プロジェクト
-          </button>
+           <Link to="/projects/create" className="primaryButton">
+            <span className="buttonIcon">＋</span>
+            <span>新規プロジェクト</span>
+          </Link>
         </header>
 
         <table className="table">
