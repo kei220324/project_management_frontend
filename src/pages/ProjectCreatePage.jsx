@@ -9,6 +9,32 @@ export default function ProjectCreatePage() {
 
   const navigate = useNavigate();
 
+  const handleSubmit = async () => {
+    try {
+      const res = await fetch("http://localhost/api/projects", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          summary,
+          due_date: dueDate,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("プロジェクトの追加に失敗しました");
+      }
+
+      navigate("/projects", {
+        state: { message: "プロジェクトを追加しました" },
+      });
+    } catch (error) {
+      console.error("Error creating project:", error);
+    }
+  };
+
   return (
     <div className="projectCreatePage">
       <div className="projectCreateCard">
@@ -53,6 +79,7 @@ export default function ProjectCreatePage() {
 
           <button
             type="button"
+            onClick={handleSubmit}
             className="projectCreateButton"
           >
             追加
