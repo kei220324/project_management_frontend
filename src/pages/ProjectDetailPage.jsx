@@ -145,10 +145,12 @@ export default function ProjectDetailPage() {
           </div>
 
           <div className="projectActions">
-            <button className="actionButton" type="button">
-              <span className="actionIcon">✏️</span>
-              編集
-            </button>
+            <Link to={`/projects/${project.id}/edit`} className="editLink">
+              <button className="actionButton" type="button">
+                <span className="actionIcon">✏️</span>
+                編集
+              </button>
+            </Link>
             <button
               onClick={openDeleteModal}
               className="actionButton"
