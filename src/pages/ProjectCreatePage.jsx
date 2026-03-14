@@ -9,7 +9,9 @@ export default function ProjectCreatePage() {
 
   const navigate = useNavigate();
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     try {
       const res = await fetch("http://localhost/api/projects", {
         method: "POST",
@@ -40,51 +42,53 @@ export default function ProjectCreatePage() {
       <div className="projectCreateCard">
         <h1 className="projectCreateTitle">プロジェクト追加</h1>
 
-        <div className="projectCreateFormGroup">
-          <label className="projectCreateLabel">プロジェクト名</label>
-          <input
-            type="text"
-            className="projectCreateInput"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="projectCreateFormGroup">
+            <label className="projectCreateLabel">プロジェクト名</label>
+            <input
+              type="text"
+              className="projectCreateInput"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
 
-        <div className="projectCreateFormGroup">
-          <label className="projectCreateLabel">概要</label>
-          <textarea
-            className="projectCreateTextarea"
-            value={summary}
-            onChange={(e) => setSummary(e.target.value)}
-          />
-        </div>
+          <div className="projectCreateFormGroup">
+            <label className="projectCreateLabel">概要</label>
+            <textarea
+              className="projectCreateTextarea"
+              value={summary}
+              onChange={(e) => setSummary(e.target.value)}
+            />
+          </div>
 
-        <div className="projectCreateFormGroup">
-          <label className="projectCreateLabel">締切日</label>
-          <input
-            type="date"
-            className="projectCreateInput"
-            value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
-          />
-        </div>
+          <div className="projectCreateFormGroup">
+            <label className="projectCreateLabel">締切日</label>
+            <input
+              type="date"
+              className="projectCreateInput"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+            />
+          </div>
 
-        <div className="projectCreateActions">
-          <button
-            className="projectCreateBackButton"
-            onClick={() => navigate("/projects")}
-          >
-            戻る
-          </button>
+          <div className="projectCreateActions">
+            <button
+              type="button"
+              className="projectCreateBackButton"
+              onClick={() => navigate("/projects")}
+            >
+              戻る
+            </button>
 
-          <button
-            type="button"
-            onClick={handleSubmit}
-            className="projectCreateButton"
-          >
-            追加
-          </button>
-        </div>
+            <button
+              type="submit"
+              className="projectCreateButton"
+            >
+              追加
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
