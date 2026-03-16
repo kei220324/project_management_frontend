@@ -1,15 +1,63 @@
 import "./ProjectEditPage.css";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 
 export default function ProjectEditPage() {
-  const [name, setName] = useState("Python");
-  const [summary, setSummary] = useState("機械学習の基礎を学ぶ");
-  const [dueDate, setDueDate] = useState("2024年5月31日");
+  const [name, setName] = useState("");
+  const [summary, setSummary] = useState("");
+  const [dueDate, setDueDate] = useState("");
 
-  const handleSubmit = (e) => {
+  const { projectId } = useParams();
+  const projectApiUrl = `http://localhost/api/projects/${projectId}`;
+
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-  };
 
+    try {
+      const res = await fetch(projectApiUrl, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          summary,
+          due_date: dueDate,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("更新に失敗しました");
+      }
+
+      navigate(`/projects/${projectId}`);
+    } catch (error) {
+      console.error("Error updating project:", error);
+    }
+  };
+  useEffect(() => {
+    const fetchProject = async () => {
+      try {
+        const res = await fetch(projectApiUrl);
+
+        if (!res.ok) {
+          throw new Error("プロジェクトの取得に失敗しました");
+        }
+
+        const data = await res.json();
+
+        setName(data.name);
+        setSummary(data.summary);
+        setDueDate(data.due_date);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    fetchProject();
+  }, [projectApiUrl]);
   return (
     <div className="projectEditPage">
       <div className="projectEditContainer">
@@ -59,7 +107,11 @@ export default function ProjectEditPage() {
               <button type="submit" className="projectEditSaveButton">
                 保存
               </button>
-              <button type="button" className="projectEditCancelButton">
+              <button
+                type="button"
+                className="projectEditCancelButton"
+                onClick={() => navigate(`/projects/${projectId}`)}
+              >
                 キャンセル
               </button>
             </div>
