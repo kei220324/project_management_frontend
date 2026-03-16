@@ -74,7 +74,7 @@ export default function ProjectCreatePage() {
             className="projectCreateBackButton"
             onClick={() => navigate("/projects")}
           >
-            戻る
+            キャンセル
           </button>
 
           <button
