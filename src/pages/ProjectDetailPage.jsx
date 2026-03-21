@@ -11,8 +11,12 @@ export default function ProjectDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
+
+  const [taskName, setTaskName] = useState("");
+  const [taskDueDate, setTaskDueDate] = useState("");
 
   const projectApiUrl = `http://localhost/api/projects/${projectId}`;
 
@@ -47,6 +51,16 @@ export default function ProjectDetailPage() {
   const closeDeleteModal = () => {
     setIsDeleteModalOpen(false);
     setDeleteError(null);
+  };
+
+  const openAddTaskModal = () => {
+    setIsAddTaskModalOpen(true);
+  };
+
+  const closeAddTaskModal = () => {
+    setIsAddTaskModalOpen(false);
+    setTaskName("");
+    setTaskDueDate("");
   };
 
   const handleDelete = async () => {
@@ -112,6 +126,9 @@ export default function ProjectDetailPage() {
 
   const progressPercent = project.progress_percent ?? 0;
 
+  const handleAddTask = async (e) => {
+  }
+
   return (
     <div className="page">
       {/* ヘッダー */}
@@ -151,6 +168,7 @@ export default function ProjectDetailPage() {
                 編集
               </button>
             </Link>
+
             <button
               onClick={openDeleteModal}
               className="actionButton"
@@ -187,6 +205,57 @@ export default function ProjectDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* タスク一覧ヘッダー */}
+      <div className="taskHeader">
+        <h2 className="taskTitle">タスク一覧</h2>
+        <button
+          type="button"
+          className="addTaskButton"
+          onClick={openAddTaskModal}
+        >
+          <span className="addTaskButton__icon">＋</span>
+          <span className="addTaskButton__text">タスク追加</span>
+        </button>
+      </div>
+
+      {/* タスク追加モーダル */}
+      {isAddTaskModalOpen && (
+        <div className="modalOverlay" onClick={closeAddTaskModal}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h2 className="modalTitle">タスク追加</h2>
+            <form className="modalForm" onSubmit={handleAddTask}>
+              <div className="modalField">
+                <label htmlFor="taskName">タスク名</label>
+                <input
+                  id="taskName"
+                  type="text"
+                  placeholder="タスク名を入力"
+                  value={taskName}
+                  onChange={(e) => setTaskName(e.target.value)}
+                />
+              </div>
+
+              <div className="modalField">
+                <label htmlFor="taskDueDate">締切日</label>
+                <input
+                  id="taskDueDate"
+                  type="date"
+                  value={taskDueDate}
+                  onChange={(e) => setTaskDueDate(e.target.value)}
+                />
+              </div>
+
+              <div className="modalActions">
+                <button type="button" onClick={closeAddTaskModal}>
+                  キャンセル
+                </button>
+                <button type="submit">追加</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* タスクリストカード */}
       <div className="card taskCard">
