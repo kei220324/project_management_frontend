@@ -127,7 +127,40 @@ export default function ProjectDetailPage() {
   const progressPercent = project.progress_percent ?? 0;
 
   const handleAddTask = async (e) => {
-  }
+    e.preventDefault();
+
+    try {
+      const res = await fetch(
+        `http://localhost/api/projects/${projectId}/tasks`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: taskName,
+            due_date: taskDueDate,
+          }),
+        },
+      );
+
+      if (!res.ok) {
+        throw new Error("タスクの追加に失敗しました");
+      }
+
+      const newTask = await res.json();
+
+      setTasks((prevTasks) => [...prevTasks, newTask]);
+
+      setTaskName("");
+      setTaskDueDate("");
+      closeAddTaskModal();
+    } catch (e) {
+      console.error("タスクの追加に失敗しました", e);
+      alert("タスクの追加に失敗しました");
+    }
+  };
+
 
   return (
     <div className="page">
