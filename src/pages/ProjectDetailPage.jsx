@@ -124,7 +124,14 @@ export default function ProjectDetailPage() {
     );
   }
 
-  const progressPercent = project.progress_percent ?? 0;
+  const calculateProgress = (tasks) => {
+    if (tasks.length === 0) return 0;
+
+    const doneCount = tasks.filter((task) => task.is_done).length;
+    return Math.floor((doneCount / tasks.length) * 100);
+  };
+
+  const progressPercent = calculateProgress(tasks);
 
   const handleAddTask = async (e) => {
     e.preventDefault();
@@ -161,6 +168,26 @@ export default function ProjectDetailPage() {
     }
   };
 
+  const handleToggleTaskStatus = async (taskId) => {
+    try {
+      const res = await fetch(`http://localhost/api/tasks/${taskId}/toggle`, {
+        method: "PATCH",
+      });
+
+      if (!res.ok) {
+        throw new Error("タスクの状態の更新に失敗しました");
+      }
+
+      const updateTask = await res.json();
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === updateTask.id ? updateTask : task,
+        ),
+      );
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   return (
     <div className="page">
@@ -307,14 +334,18 @@ export default function ProjectDetailPage() {
                 <tr key={task.id}>
                   <td className="taskNameCell">{task.name}</td>
                   <td className="taskStatusCell">
-                    <span className={getTaskStatusClass(task)}>
-                      {getTaskStatusLabel(task)}
-                    </span>
+                    <button
+                      onClick={() => handleToggleTaskStatus(task.id)}
+                      type="button"
+                      className={`taskStatusButton ${task.is_done ? "isDone" : "isTodo"}`}
+                    >
+                      {task.is_done ? "完了" : "未完了"}
+                    </button>
                   </td>
                   <td className="taskDueCell">{task.due_date}</td>
                   <td className="taskActionCell">
                     <button className="editTaskButton" type="button">
-                      ✏️
+                      ✏️ 編集
                     </button>
                   </td>
                 </tr>

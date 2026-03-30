@@ -112,10 +112,20 @@
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .actionButton:hover {
   background-color: #e5e7eb;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
+}
+
+.actionButton:active {
+  transform: translateY(0);
 }
 
 .actionIcon {
@@ -161,6 +171,11 @@
   width: 20%;
 }
 
+.taskStatusCell,
+.taskActionCell {
+  vertical-align: middle;
+}
+
 .addTaskButton {
   display: inline-flex;
   align-items: center;
@@ -193,6 +208,7 @@
 .addTaskButton:active {
   transform: translateY(0);
 }
+
 .addTaskButton__icon {
   font-size: 22px;
   font-weight: 500;
@@ -204,6 +220,93 @@
   font-weight: 700;
 }
 
+/* 状況ボタン */
+.taskStatusButton {
+  min-width: 118px;
+  height: 48px;
+  padding: 0 24px;
+  border: none;
+  border-radius: 999px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.taskStatusButton.isTodo {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.taskStatusButton.isDone {
+  background: #d1fae5;
+  color: #047857;
+}
+
+.taskStatusButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+.taskStatusButton:active {
+  transform: translateY(0);
+}
+
+.taskStatusButton:focus-visible {
+  outline: 3px solid rgba(47, 111, 228, 0.25);
+  outline-offset: 2px;
+}
+
+/* 編集ボタン */
+.editTaskButton {
+  min-width: 74px;
+  height: 44px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.editTaskButton:hover {
+  background: #e5e7eb;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
+}
+
+.editTaskButton:active {
+  transform: translateY(0);
+}
+
+.editTaskButton:focus-visible {
+  outline: 3px solid rgba(47, 111, 228, 0.2);
+  outline-offset: 2px;
+}
+
+/* 完了タスク行を少し落ち着かせる場合に使える */
+.doneRow {
+  opacity: 0.78;
+}
+
+/* モーダル */
 .modalOverlay {
   position: fixed;
   top: 0;
@@ -260,12 +363,14 @@
   border-radius: 6px;
   font-size: 14px;
 }
+
 .modalActions {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
   margin-top: 20px;
 }
+
 .modalActions button:first-child {
   background: #eee;
   border: none;
