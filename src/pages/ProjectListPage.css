@@ -106,3 +106,35 @@
   color: #1f7a4a;
   font-weight: 600;
 }
+
+.infoMessage {
+  margin-top: 24px;
+  font-size: 14px;
+}
+
+.errorBox {
+  margin-top: 24px;
+  padding: 16px;
+  border: 1px solid #f3c2c2;
+  border-radius: 8px;
+  background-color: #fff5f5;
+}
+
+.errorMessage {
+  margin: 0 0 12px;
+  color: #d93025;
+  font-size: 14px;
+}
+
+.retryButton {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background-color: #333;
+  color: #fff;
+  cursor: pointer;
+}
+
+.retryButton:hover {
+  opacity: 0.9;
+}
