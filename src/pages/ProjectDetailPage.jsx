@@ -12,13 +12,19 @@ export default function ProjectDetailPage() {
   const [error, setError] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
+  const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
+  const [editTaskName, setEditTaskName] = useState("");
+  const [editTaskDueDate, setEditTaskDueDate] = useState("");
+  const [selectedTask, setSelectedTask] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
-
   const [taskName, setTaskName] = useState("");
   const [taskDueDate, setTaskDueDate] = useState("");
+  const [iscloseEditTaskModal, setIsCloseEditTaskModal] = useState(false);
 
-  const projectApiUrl = `http://localhost/api/projects/${projectId}`;
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+  const projectApiUrl = `${API_BASE_URL}/projects/${projectId}`;
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -189,6 +195,50 @@ export default function ProjectDetailPage() {
     }
   };
 
+  const openEditTaskModal = (task) => {
+    setSelectedTask(task);
+    setEditTaskName(task.name);
+    setEditTaskDueDate(task.due_date);
+    setIsEditTaskModalOpen(true);
+  };
+
+  const handleEditTask = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await fetch(`http://localhost/api/tasks/${selectedTask.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: editTaskName,
+          due_date: editTaskDueDate,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("タスクの更新に失敗しました");
+      }
+
+      const updatedTask = await res.json();
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === updatedTask.id ? updatedTask : task,
+        ),
+      );
+
+      setIsEditTaskModalOpen(false);
+    } catch (e) {
+      console.error("タスクの更新に失敗しました", e);
+      alert("タスクの更新に失敗しました");
+    }
+  };
+
+  const closeEditTaskModal = () => {
+    setIsEditTaskModalOpen(false);
+  };
+
   return (
     <div className="page">
       {/* ヘッダー */}
@@ -344,8 +394,12 @@ export default function ProjectDetailPage() {
                   </td>
                   <td className="taskDueCell">{task.due_date}</td>
                   <td className="taskActionCell">
-                    <button className="editTaskButton" type="button">
-                      ✏️ 編集
+                    <button
+                      className="editTaskButton"
+                      onClick={() => openEditTaskModal(task)}
+                      type="button"
+                    >
+                      編集
                     </button>
                   </td>
                 </tr>
@@ -353,6 +407,42 @@ export default function ProjectDetailPage() {
             </tbody>
           </table>
         </div>
+        {isEditTaskModalOpen && (
+          <div className="modalOverlay" onClick={closeEditTaskModal}>
+            <div className="modal" onClick={(e) => e.stopPropagation()}>
+              <h2 className="modalTitle">タスク編集</h2>
+
+              <form onSubmit={handleEditTask}>
+                <div className="modalField">
+                  <label htmlFor="editTaskName">タスク名</label>
+                  <input
+                    id="editTaskName"
+                    type="text"
+                    value={editTaskName}
+                    onChange={(e) => setEditTaskName(e.target.value)}
+                  />
+                </div>
+
+                <div className="modalField">
+                  <label htmlFor="editTaskDueDate">締切日</label>
+                  <input
+                    id="editTaskDueDate"
+                    type="date"
+                    value={editTaskDueDate}
+                    onChange={(e) => setEditTaskDueDate(e.target.value)}
+                  />
+                </div>
+
+                <div className="modalActions">
+                  <button type="button" onClick={closeEditTaskModal}>
+                    キャンセル
+                  </button>
+                  <button type="submit">更新</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
