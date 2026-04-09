@@ -1,0 +1,90 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f5f6f8;
+  font-family: sans-serif;
+}
+
+.projectCreatePage {
+  min-height: 100vh;
+  padding: 40px;
+}
+
+.projectCreateCard {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px;
+  background: #ffffff;
+  border: 1px solid #d9dee5;
+  border-radius: 10px;
+}
+
+.projectCreateTitle {
+  margin-bottom: 20px;
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.projectCreateMessage {
+  margin-bottom: 30px;
+  font-size: 16px;
+  color: #555;
+}
+
+.projectCreateFormGroup {
+  margin-bottom: 20px;
+}
+
+.projectCreateLabel {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.projectCreateInput,
+.projectCreateTextarea {
+  width: 100%;
+  border: 1px solid #cfd6de;
+  border-radius: 6px;
+  font-size: 16px;
+  padding: 10px;
+}
+
+.projectCreateTextarea {
+  min-height: 100px;
+  resize: none;
+}
+
+.projectCreateButton {
+  padding: 10px 20px;
+  background: #2f73ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.projectCreateActions {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.projectCreateBackButton {
+  padding: 10px 20px;
+  background: #e5e7eb;
+  color: #333;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.projectCreateButton:hover {
+  opacity: 0.9;
+}
