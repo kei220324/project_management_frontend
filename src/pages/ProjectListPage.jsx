@@ -14,15 +14,15 @@ export default function ProjectListPage() {
   const [flashMessage, setFlashMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const location = useLocation();
+　const location = useLocation();
   const navigate = useNavigate();
-
+  
+  const projectsApiUrl = `${API_BASE_URL}/projects`;
   const fetchProjects = () => {
     setLoading(true);
     setError(null);
 
-    fetch(`${API_BASE_URL}/projects`)
+     fetch(projectsApiUrl)
       .then((res) => {
         if (!res.ok) {
           throw new Error("データ取得に失敗しました");
