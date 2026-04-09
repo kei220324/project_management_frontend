@@ -112,10 +112,20 @@
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .actionButton:hover {
   background-color: #e5e7eb;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
+}
+
+.actionButton:active {
+  transform: translateY(0);
 }
 
 .actionIcon {
@@ -123,12 +133,27 @@
 }
 
 /* タスクリストカード */
-.taskCard{
+.taskCard {
   padding: 28px;
 }
 
-.taskTableContainer{
-  margin-bottom:24px;
+.taskHeader {
+  max-width: 1040px;
+  margin: 40px auto 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.taskTitle {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.taskTableContainer {
+  margin-bottom: 24px;
 }
 
 .colTaskName {
@@ -142,12 +167,223 @@
   width: 25%;
 }
 
-.colTaskAction{
-  width:20%;
+.colTaskAction {
+  width: 20%;
 }
 
+.taskStatusCell,
+.taskActionCell {
+  vertical-align: middle;
+}
 
+.addTaskButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 140px;
+  height: 48px;
+  padding: 0 18px;
+  background: #2f6fe4;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(47, 111, 228, 0.18);
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
 
+.addTaskButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(47, 111, 228, 0.28);
+  opacity: 0.98;
+}
 
+.addTaskButton:active {
+  transform: translateY(0);
+}
 
+.addTaskButton__icon {
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1;
+}
 
+.addTaskButton__text {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* 状況ボタン */
+.taskStatusButton {
+  min-width: 118px;
+  height: 48px;
+  padding: 0 24px;
+  border: none;
+  border-radius: 999px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.taskStatusButton.isTodo {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.taskStatusButton.isDone {
+  background: #d1fae5;
+  color: #047857;
+}
+
+.taskStatusButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+.taskStatusButton:active {
+  transform: translateY(0);
+}
+
+.taskStatusButton:focus-visible {
+  outline: 3px solid rgba(47, 111, 228, 0.25);
+  outline-offset: 2px;
+}
+
+/* 編集ボタン */
+.editTaskButton {
+  min-width: 74px;
+  height: 44px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.editTaskButton:hover {
+  background: #e5e7eb;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
+}
+
+.editTaskButton:active {
+  transform: translateY(0);
+}
+
+.editTaskButton:focus-visible {
+  outline: 3px solid rgba(47, 111, 228, 0.2);
+  outline-offset: 2px;
+}
+
+/* 完了タスク行を少し落ち着かせる場合に使える */
+.doneRow {
+  opacity: 0.78;
+}
+
+/* モーダル */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 1000;
+}
+
+.modal {
+  width: 400px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* タイトル */
+.modalTitle {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+/* フォーム */
+.modalForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* フィールド */
+.modalField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.modalField label {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.modalField input,
+.modalField select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.modalActions button:first-child {
+  background: #eee;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.modalActions button:last-child {
+  background: #4caf50;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
