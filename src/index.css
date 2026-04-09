@@ -22,46 +22,6 @@ body {
   overflow: hidden;
 }
 
-/* ヘッダー */
-.cardHeader {
-  padding: 28px 28px 20px;
-  border-bottom: 1px solid #e6eef8;
-}
-
-.title {
-  margin: 0 0 18px;
-  font-size: 40px;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-}
-
-/* 新規ボタン */
-.primaryButton {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 18px;
-
-  background-color: #1d4ed8;
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.primaryButton:hover {
-  background-color: #1e40af;
-}
-
-.plus {
-  margin-top: -2px;
-  font-size: 22px;
-  line-height: 1;
-}
-
 /* テーブル */
 .table {
   width: 100%;
@@ -72,8 +32,7 @@ body {
 .table thead th {
   padding: 18px 22px;
   background: #ffffff;
-  border-bottom: 1px solid #e6eef8;
-
+  border-bottom: solid 1px #e6eef8;
   text-align: left;
   font-size: 18px;
   font-weight: 800;
@@ -81,48 +40,11 @@ body {
 
 .table tbody td {
   padding: 18px 22px;
-  border-bottom: 1px solid #eef3fb;
-
+  border-bottom: solid 1px #e6eef8;
   font-size: 18px;
   vertical-align: middle;
 }
 
 .table tbody tr:hover {
   background: #f8fbff;
-}
-
-/* 列幅 */
-.colProject {
-  width: 24%;
-}
-
-.colSummary {
-  width: 36%;
-}
-
-.colStatus {
-  width: 16%;
-}
-
-.colDue {
-  width: 14%;
-}
-
-.colProgress {
-  width: 10%;
-}
-
-/* プロジェクト名 */
-.projectLink {
-  color: #1d4ed8;
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.projectLink:hover {
-  text-decoration: underline;
-}
-
-.projectText {
-  font-weight: 700;
 }
