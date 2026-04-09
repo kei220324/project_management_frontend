@@ -21,7 +21,7 @@ export default function ProjectDetailPage() {
   const [deleteError, setDeleteError] = useState(null);
   const [taskName, setTaskName] = useState("");
   const [taskDueDate, setTaskDueDate] = useState("");
-  const [iscloseEditTaskModal, setIsCloseEditTaskModal] = useState(false);
+ 
 
   const  projectDetailApiUrl  = `${API_BASE_URL}/projects/${projectId}`;
 
@@ -94,15 +94,6 @@ export default function ProjectDetailPage() {
     }
   };
 
-  const getTaskStatusLabel = (task) => {
-    if (task.is_done) return "完了";
-    return "未完了";
-  };
-
-  const getTaskStatusClass = (task) => {
-    if (task.is_done) return "statusBadge statusCompleted";
-    return "statusBadge statusNotStarted";
-  };
 
   if (loading) {
     return (
@@ -143,7 +134,7 @@ export default function ProjectDetailPage() {
 
     try {
       const res = await fetch(
-        `http://localhost/api/projects/${projectId}/tasks`,
+        `${API_BASE_URL}/projects/${projectId}/tasks`,
         {
           method: "POST",
           headers: {
@@ -175,7 +166,7 @@ export default function ProjectDetailPage() {
 
   const handleToggleTaskStatus = async (taskId) => {
     try {
-      const res = await fetch(`http://localhost/api/tasks/${taskId}/toggle`, {
+      const res = await fetch(`${API_BASE_URL}/tasks/${taskId}/toggle`, {
         method: "PATCH",
       });
 
@@ -205,7 +196,7 @@ export default function ProjectDetailPage() {
     e.preventDefault();
 
     try {
-      const res = await fetch(`http://localhost/api/tasks/${selectedTask.id}`, {
+      const res = await fetch(`${API_BASE_URL}/tasks/${selectedTask.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
