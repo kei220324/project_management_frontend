@@ -21,9 +21,7 @@ export default function ProjectDetailPage() {
   const [deleteError, setDeleteError] = useState(null);
   const [taskName, setTaskName] = useState("");
   const [taskDueDate, setTaskDueDate] = useState("");
- 
-
-  const  projectDetailApiUrl  = `${API_BASE_URL}/projects/${projectId}`;
+ const projectDetailApiUrl = `${API_BASE_URL}/projects/${projectId}`;
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -94,7 +92,6 @@ export default function ProjectDetailPage() {
     }
   };
 
-
   if (loading) {
     return (
       <div className="page">
@@ -133,19 +130,18 @@ export default function ProjectDetailPage() {
     e.preventDefault();
 
     try {
-      const res = await fetch(
-        `${API_BASE_URL}/projects/${projectId}/tasks`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: taskName,
-            due_date: taskDueDate,
-          }),
+      const res = await fetch(`${API_BASE_URL}/projects/${projectId}/tasks`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          name: taskName,
+          due_date: taskDueDate,
+        }),
+      });
+
+
 
       if (!res.ok) {
         throw new Error("タスクの追加に失敗しました");
@@ -228,7 +224,6 @@ export default function ProjectDetailPage() {
   const closeEditTaskModal = () => {
     setIsEditTaskModalOpen(false);
   };
-
   return (
     <div className="page">
       {/* ヘッダー */}
