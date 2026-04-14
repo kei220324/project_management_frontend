@@ -223,7 +223,11 @@ export default function ProjectDetailPage() {
 
   const closeEditTaskModal = () => {
     setIsEditTaskModalOpen(false);
+    setSelectedTask(null);
+    setEditTaskName("");
+    setEditTaskDueDate("");
   };
+
   return (
     <div className="page">
       {/* ヘッダー */}
