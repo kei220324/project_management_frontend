@@ -153,7 +153,7 @@ export default function ProjectDetailPage() {
 
     if (hasError) return;
     try {
-      const res = await fetch(`${API_BASE_URL}/projects/${projectId}/task`, {
+      const res = await fetch(`${API_BASE_URL}/projects/${projectId}/tasks`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -296,31 +296,6 @@ export default function ProjectDetailPage() {
               <span className="actionIcon">🗑️</span>
               削除
             </button>
-
-            {isDeleteModalOpen && (
-              <div className="modalOverlay">
-                <div className="modal">
-                  <p>本当に削除しますか？</p>
-                  {deleteError && <p className="modalError">{deleteError}</p>}
-                  <div className="modalActions">
-                    <button
-                      type="button"
-                      onClick={closeDeleteModal}
-                      disabled={isDeleting}
-                    >
-                      キャンセル
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleDelete}
-                      disabled={isDeleting}
-                    >
-                      {isDeleting ? "削除中..." : "OK"}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>
@@ -458,6 +433,31 @@ export default function ProjectDetailPage() {
           </div>
         )}
       </div>
+
+      {isDeleteModalOpen && (
+        <div className="modalOverlay">
+          <div className="modal">
+            <p>本当に削除しますか？</p>
+            {deleteError && <p className="modalError">{deleteError}</p>}
+            <div className="modalActions">
+              <button
+                type="button"
+                onClick={closeDeleteModal}
+                disabled={isDeleting}
+              >
+                キャンセル
+              </button>
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={isDeleting}
+              >
+                {isDeleting ? "削除中..." : "OK"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
