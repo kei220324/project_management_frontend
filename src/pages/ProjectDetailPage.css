@@ -387,3 +387,10 @@
   border-radius: 6px;
   cursor: pointer;
 }
+
+.fieldError {
+  margin-top: 6px;
+  margin-bottom: 4px;
+  color: #dc2626;
+  font-size: 13px;
+}

@@ -13,6 +13,9 @@ export default function ProjectDetailPage() {
   const [error, setError] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
+  const [addTaskError, setAddTaskError] = useState(null);
+  const [taskNameError, setTaskNameError] = useState(null);
+  const [taskDueDateError, setTaskDueDateError] = useState(null);
   const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
   const [editTaskName, setEditTaskName] = useState("");
   const [editTaskDueDate, setEditTaskDueDate] = useState("");
@@ -21,7 +24,7 @@ export default function ProjectDetailPage() {
   const [deleteError, setDeleteError] = useState(null);
   const [taskName, setTaskName] = useState("");
   const [taskDueDate, setTaskDueDate] = useState("");
- const projectDetailApiUrl = `${API_BASE_URL}/projects/${projectId}`;
+  const projectDetailApiUrl = `${API_BASE_URL}/projects/${projectId}`;
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -64,6 +67,9 @@ export default function ProjectDetailPage() {
     setIsAddTaskModalOpen(false);
     setTaskName("");
     setTaskDueDate("");
+    setAddTaskError(null);
+    setTaskNameError(null);
+    setTaskDueDateError(null);
   };
 
   const handleDelete = async () => {
@@ -129,8 +135,25 @@ export default function ProjectDetailPage() {
   const handleAddTask = async (e) => {
     e.preventDefault();
 
+    setAddTaskError(null);
+    setTaskNameError(null);
+    setTaskDueDateError(null);
+
+    let hasError = false;
+
+    if (!taskName.trim()) {
+      setTaskNameError("タスク名を入力してください");
+      hasError = true;
+    }
+
+    if (!taskDueDate) {
+      setTaskDueDateError("締切日を入力してください");
+      hasError = true;
+    }
+
+    if (hasError) return;
     try {
-      const res = await fetch(`${API_BASE_URL}/projects/${projectId}/tasks`, {
+      const res = await fetch(`${API_BASE_URL}/projects/${projectId}/task`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -140,8 +163,6 @@ export default function ProjectDetailPage() {
           due_date: taskDueDate,
         }),
       });
-
-
 
       if (!res.ok) {
         throw new Error("タスクの追加に失敗しました");
@@ -156,10 +177,9 @@ export default function ProjectDetailPage() {
       closeAddTaskModal();
     } catch (e) {
       console.error("タスクの追加に失敗しました", e);
-      alert("タスクの追加に失敗しました");
+      setAddTaskError("タスクの追加に失敗しました");
     }
   };
-
   const handleToggleTaskStatus = async (taskId) => {
     try {
       const res = await fetch(`${API_BASE_URL}/tasks/${taskId}/toggle`, {
@@ -324,6 +344,7 @@ export default function ProjectDetailPage() {
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <h2 className="modalTitle">タスク追加</h2>
             <form className="modalForm" onSubmit={handleAddTask}>
+              {addTaskError && <p className="modalError">{addTaskError}</p>}
               <div className="modalField">
                 <label htmlFor="taskName">タスク名</label>
                 <input
@@ -334,6 +355,7 @@ export default function ProjectDetailPage() {
                   onChange={(e) => setTaskName(e.target.value)}
                 />
               </div>
+              {taskNameError && <p className="fieldError">{taskNameError}</p>}
 
               <div className="modalField">
                 <label htmlFor="taskDueDate">締切日</label>
@@ -344,6 +366,9 @@ export default function ProjectDetailPage() {
                   onChange={(e) => setTaskDueDate(e.target.value)}
                 />
               </div>
+              {taskDueDateError && (
+                <p className="fieldError">{taskDueDateError}</p>
+              )}
 
               <div className="modalActions">
                 <button type="button" onClick={closeAddTaskModal}>
