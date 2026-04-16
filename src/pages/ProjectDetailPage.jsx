@@ -16,6 +16,10 @@ export default function ProjectDetailPage() {
   const [addTaskError, setAddTaskError] = useState(null);
   const [taskNameError, setTaskNameError] = useState(null);
   const [taskDueDateError, setTaskDueDateError] = useState(null);
+  const [editTaskError, setEditTaskError] = useState(null);
+  const [editTaskNameError, setEditTaskNameError] = useState(null);
+  const [editTaskDueDateError, setEditTaskDueDateError] = useState(null);
+
   const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
   const [editTaskName, setEditTaskName] = useState("");
   const [editTaskDueDate, setEditTaskDueDate] = useState("");
@@ -211,6 +215,24 @@ export default function ProjectDetailPage() {
   const handleEditTask = async (e) => {
     e.preventDefault();
 
+    setEditTaskError(null);
+    setEditTaskNameError(null);
+    setEditTaskDueDateError(null);
+
+    let hasError = false;
+
+    if (!editTaskName.trim()) {
+      setEditTaskNameError("タスク名を入力してください");
+      hasError = true;
+    }
+
+    if (!editTaskDueDate) {
+      setEditTaskDueDateError("締切日を入力してください");
+      hasError = true;
+    }
+
+    if (hasError) return;
+
     try {
       const res = await fetch(`${API_BASE_URL}/tasks/${selectedTask.id}`, {
         method: "PATCH",
@@ -237,7 +259,7 @@ export default function ProjectDetailPage() {
       setIsEditTaskModalOpen(false);
     } catch (e) {
       console.error("タスクの更新に失敗しました", e);
-      alert("タスクの更新に失敗しました");
+      setEditTaskError("タスクの更新に失敗しました");
     }
   };
 
@@ -246,6 +268,9 @@ export default function ProjectDetailPage() {
     setSelectedTask(null);
     setEditTaskName("");
     setEditTaskDueDate("");
+    setAddTaskError(null);
+    setEditTaskNameError(null);
+    setEditTaskDueDateError(null);
   };
 
   return (
@@ -319,7 +344,7 @@ export default function ProjectDetailPage() {
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <h2 className="modalTitle">タスク追加</h2>
             <form className="modalForm" onSubmit={handleAddTask}>
-              {addTaskError && <p className="modalError">{addTaskError}</p>}
+             {addTaskError && <p className="modalError">{addTaskError}</p>}
               <div className="modalField">
                 <label htmlFor="taskName">タスク名</label>
                 <input
@@ -402,6 +427,8 @@ export default function ProjectDetailPage() {
               <h2 className="modalTitle">タスク編集</h2>
 
               <form onSubmit={handleEditTask}>
+                {editTaskError && <p className="modalError">{editTaskError}</p>}
+
                 <div className="modalField">
                   <label htmlFor="editTaskName">タスク名</label>
                   <input
@@ -411,6 +438,9 @@ export default function ProjectDetailPage() {
                     onChange={(e) => setEditTaskName(e.target.value)}
                   />
                 </div>
+                {editTaskNameError && (
+                  <p className="fieldError">{editTaskNameError}</p>
+                )}
 
                 <div className="modalField">
                   <label htmlFor="editTaskDueDate">締切日</label>
@@ -421,6 +451,9 @@ export default function ProjectDetailPage() {
                     onChange={(e) => setEditTaskDueDate(e.target.value)}
                   />
                 </div>
+                {editTaskDueDateError && (
+                  <p className="fieldError">{editTaskDueDateError}</p>
+                )}
 
                 <div className="modalActions">
                   <button type="button" onClick={closeEditTaskModal}>
