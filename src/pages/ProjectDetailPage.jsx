@@ -26,6 +26,13 @@ export default function ProjectDetailPage() {
   const [taskDueDate, setTaskDueDate] = useState("");
   const projectDetailApiUrl = `${API_BASE_URL}/projects/${projectId}`;
 
+  const calculateProgress = (tasks) => {
+    if (tasks.length === 0) return 0;
+
+    const doneCount = tasks.filter((task) => task.is_done).length;
+    return Math.floor((doneCount / tasks.length) * 100);
+  };
+
   useEffect(() => {
     const fetchProject = async () => {
       try {
@@ -122,13 +129,6 @@ export default function ProjectDetailPage() {
       </div>
     );
   }
-
-  const calculateProgress = (tasks) => {
-    if (tasks.length === 0) return 0;
-
-    const doneCount = tasks.filter((task) => task.is_done).length;
-    return Math.floor((doneCount / tasks.length) * 100);
-  };
 
   const progressPercent = calculateProgress(tasks);
 
