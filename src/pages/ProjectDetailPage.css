@@ -132,11 +132,7 @@
   font-size: 16px;
 }
 
-/* タスクリストカード */
-.taskCard {
-  padding: 28px;
-}
-
+/* タスク一覧ヘッダー */
 .taskHeader {
   max-width: 1040px;
   margin: 40px auto 20px;
@@ -150,30 +146,6 @@
   font-size: 24px;
   font-weight: 700;
   letter-spacing: 0.02em;
-}
-
-.taskTableContainer {
-  margin-bottom: 24px;
-}
-
-.colTaskName {
-  width: 35%;
-}
-
-.colTaskStatus {
-  width: 20%;
-}
-.colTaskDue {
-  width: 25%;
-}
-
-.colTaskAction {
-  width: 20%;
-}
-
-.taskStatusCell,
-.taskActionCell {
-  vertical-align: middle;
 }
 
 .addTaskButton {
@@ -220,6 +192,127 @@
   font-weight: 700;
 }
 
+/* タスク追加モーダル / タスク編集モーダル / 削除モーダル */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  width: 400px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.modalTitle {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.modalForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modalField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.modalField label {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.modalField input,
+.modalField select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.fieldError {
+  margin-top: 6px;
+  margin-bottom: 4px;
+  color: #dc2626;
+  font-size: 13px;
+}
+
+.modalError {
+  margin-bottom: 12px;
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.modalActions button:first-child {
+  background: #eee;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.modalActions button:last-child {
+  background: #4caf50;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* タスクリストカード */
+.taskCard {
+  padding: 28px;
+}
+
+.taskTableContainer {
+  margin-bottom: 24px;
+}
+
+.colTaskName {
+  width: 35%;
+}
+
+.colTaskStatus {
+  width: 20%;
+}
+
+.colTaskDue {
+  width: 25%;
+}
+
+.colTaskAction {
+  width: 20%;
+}
+
+.taskStatusCell,
+.taskActionCell {
+  vertical-align: middle;
+}
+
 /* 状況ボタン */
 .taskStatusButton {
   min-width: 118px;
@@ -227,16 +320,13 @@
   padding: 0 24px;
   border: none;
   border-radius: 999px;
-
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   font-size: 16px;
   font-weight: 700;
   line-height: 1;
   cursor: pointer;
-
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease,
@@ -304,93 +394,4 @@
 /* 完了タスク行を少し落ち着かせる場合に使える */
 .doneRow {
   opacity: 0.78;
-}
-
-/* モーダル */
-.modalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  z-index: 1000;
-}
-
-.modal {
-  width: 400px;
-  background: #fff;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-}
-
-/* タイトル */
-.modalTitle {
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 16px;
-}
-
-/* フォーム */
-.modalForm {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-/* フィールド */
-.modalField {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.modalField label {
-  font-size: 14px;
-  font-weight: bold;
-}
-
-.modalField input,
-.modalField select {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-.modalActions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 20px;
-}
-
-.modalActions button:first-child {
-  background: #eee;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.modalActions button:last-child {
-  background: #4caf50;
-  color: #fff;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.fieldError {
-  margin-top: 6px;
-  margin-bottom: 4px;
-  color: #dc2626;
-  font-size: 13px;
 }
