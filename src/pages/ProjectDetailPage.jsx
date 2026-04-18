@@ -214,7 +214,6 @@ export default function ProjectDetailPage() {
 
   const handleEditTask = async (e) => {
     e.preventDefault();
-
     setEditTaskError(null);
     setEditTaskNameError(null);
     setEditTaskDueDateError(null);
@@ -268,7 +267,7 @@ export default function ProjectDetailPage() {
     setSelectedTask(null);
     setEditTaskName("");
     setEditTaskDueDate("");
-    setAddTaskError(null);
+    setEditTaskError(null)
     setEditTaskNameError(null);
     setEditTaskDueDateError(null);
   };
