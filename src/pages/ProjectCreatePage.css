@@ -88,3 +88,9 @@ body {
 .projectCreateButton:hover {
   opacity: 0.9;
 }
+
+.error {
+  color: #e53935; 
+  font-size: 14px;
+  margin-top: 4px;
+}

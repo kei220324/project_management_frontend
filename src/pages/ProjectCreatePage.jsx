@@ -6,12 +6,26 @@ export default function ProjectCreatePage() {
   const [name, setName] = useState("");
   const [summary, setSummary] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [nameError, setNameError] = useState(null);
 
   const navigate = useNavigate();
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMessage(null);
+    setNameError(null);
+
+    let hasError = false;
+
+    if (!name.trim()) {
+      setNameError("プロジェクト名は必須です");
+      hasError = true;
+    }
+
+    if (hasError) return;
     try {
-      const res = await fetch("http://localhost/api/projects", {
+      const res = await fetch("http://localhost/api/project", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -32,6 +46,7 @@ export default function ProjectCreatePage() {
       });
     } catch (error) {
       console.error("Error creating project:", error);
+      setErrorMessage("プロジェクトの追加に失敗しました");
     }
   };
 
@@ -39,6 +54,7 @@ export default function ProjectCreatePage() {
     <div className="projectCreatePage">
       <div className="projectCreateCard">
         <h1 className="projectCreateTitle">プロジェクト追加</h1>
+        {errorMessage && <p className="errorMessage">{errorMessage}</p>}
 
         <div className="projectCreateFormGroup">
           <label className="projectCreateLabel">プロジェクト名</label>
@@ -48,6 +64,7 @@ export default function ProjectCreatePage() {
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
+          {nameError && <p className="error">{nameError}</p>}
         </div>
 
         <div className="projectCreateFormGroup">
