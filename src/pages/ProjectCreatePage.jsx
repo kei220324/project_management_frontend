@@ -10,6 +10,7 @@ export default function ProjectCreatePage() {
   const [nameError, setNameError] = useState(null);
 
   const navigate = useNavigate();
+   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,7 +26,7 @@ export default function ProjectCreatePage() {
 
     if (hasError) return;
     try {
-      const res = await fetch("http://localhost/api/project", {
+       const res = await fetch(`${API_BASE_URL}/projects`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
