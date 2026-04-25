@@ -89,8 +89,17 @@ body {
   opacity: 0.9;
 }
 
-.error {
-  color: #e53935; 
+.errorMseeage {
+  margin: 0 0 12px;
+  color: #d93025;
   font-size: 14px;
-  margin-top: 4px;
 }
+
+.fieldError {
+  margin-top: 4px;
+  color: #d93025;
+  font-size:14px;
+}
+
+  
+

@@ -66,7 +66,7 @@ export default function ProjectCreatePage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
-            {nameError && <p className="error">{nameError}</p>}
+            {nameError && <p className="fieldError">{nameError}</p>}
           </div>
 
           <div className="projectCreateFormGroup">
