@@ -88,3 +88,18 @@ body {
 .projectCreateButton:hover {
   opacity: 0.9;
 }
+
+.errorMseeage {
+  margin: 0 0 12px;
+  color: #d93025;
+  font-size: 14px;
+}
+
+.fieldError {
+  margin-top: 4px;
+  color: #d93025;
+  font-size:14px;
+}
+
+  
+

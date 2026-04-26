@@ -6,12 +6,27 @@ export default function ProjectCreatePage() {
   const [name, setName] = useState("");
   const [summary, setSummary] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [nameError, setNameError] = useState(null);
 
   const navigate = useNavigate();
+   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMessage(null);
+    setNameError(null);
+
+    let hasError = false;
+
+    if (!name.trim()) {
+      setNameError("プロジェクト名は必須です");
+      hasError = true;
+    }
+
+    if (hasError) return;
     try {
-      const res = await fetch("http://localhost/api/projects", {
+       const res = await fetch(`${API_BASE_URL}/projects`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -32,6 +47,7 @@ export default function ProjectCreatePage() {
       });
     } catch (error) {
       console.error("Error creating project:", error);
+      setErrorMessage("プロジェクトの追加に失敗しました");
     }
   };
 
@@ -39,52 +55,52 @@ export default function ProjectCreatePage() {
     <div className="projectCreatePage">
       <div className="projectCreateCard">
         <h1 className="projectCreateTitle">プロジェクト追加</h1>
+        <form onSubmit={handleSubmit}>
+          {errorMessage && <p className="errorMessage">{errorMessage}</p>}
 
-        <div className="projectCreateFormGroup">
-          <label className="projectCreateLabel">プロジェクト名</label>
-          <input
-            type="text"
-            className="projectCreateInput"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </div>
+          <div className="projectCreateFormGroup">
+            <label className="projectCreateLabel">プロジェクト名</label>
+            <input
+              type="text"
+              className="projectCreateInput"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+            {nameError && <p className="fieldError">{nameError}</p>}
+          </div>
 
-        <div className="projectCreateFormGroup">
-          <label className="projectCreateLabel">概要</label>
-          <textarea
-            className="projectCreateTextarea"
-            value={summary}
-            onChange={(e) => setSummary(e.target.value)}
-          />
-        </div>
+          <div className="projectCreateFormGroup">
+            <label className="projectCreateLabel">概要</label>
+            <textarea
+              className="projectCreateTextarea"
+              value={summary}
+              onChange={(e) => setSummary(e.target.value)}
+            />
+          </div>
 
-        <div className="projectCreateFormGroup">
-          <label className="projectCreateLabel">締切日</label>
-          <input
-            type="date"
-            className="projectCreateInput"
-            value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
-          />
-        </div>
+          <div className="projectCreateFormGroup">
+            <label className="projectCreateLabel">締切日</label>
+            <input
+              type="date"
+              className="projectCreateInput"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+            />
+          </div>
 
-        <div className="projectCreateActions">
-          <button
-            className="projectCreateBackButton"
-            onClick={() => navigate("/projects")}
-          >
-            キャンセル
-          </button>
+          <div className="projectCreateActions">
+            <button type="button"
+              className="projectCreateBackButton"
+              onClick={() => navigate("/projects")}
+            >
+              キャンセル
+            </button>
 
-          <button
-            type="button"
-            onClick={handleSubmit}
-            className="projectCreateButton"
-          >
-            追加
-          </button>
-        </div>
+            <button type="submit" className="projectCreateButton">
+              追加
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
