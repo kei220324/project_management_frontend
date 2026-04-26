@@ -8,8 +8,9 @@ export default function ProjectEditPage() {
   const [dueDate, setDueDate] = useState("");
 
   const { projectId } = useParams();
-  const projectApiUrl = `http://localhost/api/projects/${projectId}`;
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+  const projectApiUrl = `${API_BASE_URL}/projects/${projectId}`;
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
