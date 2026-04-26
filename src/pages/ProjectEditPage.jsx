@@ -6,6 +6,8 @@ export default function ProjectEditPage() {
   const [name, setName] = useState("");
   const [summary, setSummary] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const [fetchError, setFetchError] = useState(null);
+  const [submitError, setSubmitError] = useState(null);
 
   const { projectId } = useParams();
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -15,6 +17,7 @@ export default function ProjectEditPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitError(null);
 
     try {
       const res = await fetch(projectApiUrl, {
@@ -36,6 +39,7 @@ export default function ProjectEditPage() {
       navigate(`/projects/${projectId}`);
     } catch (error) {
       console.error("Error updating project:", error);
+      setSubmitError("プロジェクトの更新に失敗しました");
     }
   };
   useEffect(() => {
@@ -54,6 +58,7 @@ export default function ProjectEditPage() {
         setDueDate(data.due_date);
       } catch (e) {
         console.error(e);
+        setFetchError("プロジェクトの取得に失敗しました");
       }
     };
 
@@ -65,7 +70,9 @@ export default function ProjectEditPage() {
         <h1 className="projectEditTitle">プロジェクト編集</h1>
 
         <div className="projectEditCard">
+          {fetchError && <p className="errorMessage">{fetchError}</p>}
           <form className="projectEditForm" onSubmit={handleSubmit}>
+              {submitError && <p className="errorMessage">{submitError}</p>}
             <div className="projectEditField">
               <label className="projectEditLabel" htmlFor="projectName">
                 プロジェクト名
@@ -98,7 +105,7 @@ export default function ProjectEditPage() {
               <input
                 id="projectDueDate"
                 className="projectEditInput projectEditDateInput"
-                type="text"
+                type="date"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
               />
