@@ -8,6 +8,7 @@ export default function ProjectEditPage() {
   const [dueDate, setDueDate] = useState("");
   const [fetchError, setFetchError] = useState(null);
   const [submitError, setSubmitError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const { projectId } = useParams();
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -44,6 +45,8 @@ export default function ProjectEditPage() {
   };
   useEffect(() => {
     const fetchProject = async () => {
+      setLoading(true);
+      setFetchError(null);
       try {
         const res = await fetch(projectApiUrl);
 
@@ -59,6 +62,8 @@ export default function ProjectEditPage() {
       } catch (e) {
         console.error(e);
         setFetchError("プロジェクトの取得に失敗しました");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -70,60 +75,65 @@ export default function ProjectEditPage() {
         <h1 className="projectEditTitle">プロジェクト編集</h1>
 
         <div className="projectEditCard">
-          {fetchError && <p className="errorMessage">{fetchError}</p>}
-          <form className="projectEditForm" onSubmit={handleSubmit}>
+          {loading ? (
+            <p>読み込み中...</p>
+          ) : fetchError ? (
+            <p className="errorMessage">{fetchError}</p>
+          ) : (
+            <form className="projectEditForm" onSubmit={handleSubmit}>
               {submitError && <p className="errorMessage">{submitError}</p>}
-            <div className="projectEditField">
-              <label className="projectEditLabel" htmlFor="projectName">
-                プロジェクト名
-              </label>
-              <input
-                id="projectName"
-                className="projectEditInput"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
+              <div className="projectEditField">
+                <label className="projectEditLabel" htmlFor="projectName">
+                  プロジェクト名
+                </label>
+                <input
+                  id="projectName"
+                  className="projectEditInput"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
 
-            <div className="projectEditField">
-              <label className="projectEditLabel" htmlFor="projectSummary">
-                概要
-              </label>
-              <textarea
-                id="projectSummary"
-                className="projectEditTextarea"
-                value={summary}
-                onChange={(e) => setSummary(e.target.value)}
-              />
-            </div>
+              <div className="projectEditField">
+                <label className="projectEditLabel" htmlFor="projectSummary">
+                  概要
+                </label>
+                <textarea
+                  id="projectSummary"
+                  className="projectEditTextarea"
+                  value={summary}
+                  onChange={(e) => setSummary(e.target.value)}
+                />
+              </div>
 
-            <div className="projectEditField projectEditFieldSmall">
-              <label className="projectEditLabel" htmlFor="projectDueDate">
-                締切日
-              </label>
-              <input
-                id="projectDueDate"
-                className="projectEditInput projectEditDateInput"
-                type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-              />
-            </div>
+              <div className="projectEditField projectEditFieldSmall">
+                <label className="projectEditLabel" htmlFor="projectDueDate">
+                  締切日
+                </label>
+                <input
+                  id="projectDueDate"
+                  className="projectEditInput projectEditDateInput"
+                  type="date"
+                  value={dueDate}
+                  onChange={(e) => setDueDate(e.target.value)}
+                />
+              </div>
 
-            <div className="projectEditActions">
-              <button type="submit" className="projectEditSaveButton">
-                保存
-              </button>
-              <button
-                type="button"
-                className="projectEditCancelButton"
-                onClick={() => navigate(`/projects/${projectId}`)}
-              >
-                キャンセル
-              </button>
-            </div>
-          </form>
+              <div className="projectEditActions">
+                <button type="submit" className="projectEditSaveButton">
+                  保存
+                </button>
+                <button
+                  type="button"
+                  className="projectEditCancelButton"
+                  onClick={() => navigate(`/projects/${projectId}`)}
+                >
+                  キャンセル
+                </button>
+              </div>
+            </form>
+          )}
         </div>
       </div>
     </div>
