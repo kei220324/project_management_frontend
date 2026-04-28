@@ -9,6 +9,7 @@ export default function ProjectEditPage() {
   const [fetchError, setFetchError] = useState(null);
   const [submitError, setSubmitError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { projectId } = useParams();
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -19,6 +20,8 @@ export default function ProjectEditPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitError(null);
+
+    setIsSubmitting(true);
 
     try {
       const res = await fetch(projectApiUrl, {
@@ -41,6 +44,8 @@ export default function ProjectEditPage() {
     } catch (error) {
       console.error("Error updating project:", error);
       setSubmitError("プロジェクトの更新に失敗しました");
+    } finally {
+      setIsSubmitting(false);
     }
   };
   useEffect(() => {
@@ -55,7 +60,6 @@ export default function ProjectEditPage() {
         }
 
         const data = await res.json();
-
         setName(data.name);
         setSummary(data.summary);
         setDueDate(data.due_date);
@@ -121,8 +125,12 @@ export default function ProjectEditPage() {
               </div>
 
               <div className="projectEditActions">
-                <button type="submit" className="projectEditSaveButton">
-                  保存
+                <button
+                  type="submit"
+                  className="projectEditSaveButton"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "保存中..." : "保存"}
                 </button>
                 <button
                   type="button"
