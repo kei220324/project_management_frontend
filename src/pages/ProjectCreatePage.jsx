@@ -8,9 +8,10 @@ export default function ProjectCreatePage() {
   const [dueDate, setDueDate] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
   const [nameError, setNameError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
-   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,8 +26,9 @@ export default function ProjectCreatePage() {
     }
 
     if (hasError) return;
+    setIsSubmitting(true);
     try {
-       const res = await fetch(`${API_BASE_URL}/projects`, {
+      const res = await fetch(`${API_BASE_URL}/projects`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,6 +50,8 @@ export default function ProjectCreatePage() {
     } catch (error) {
       console.error("Error creating project:", error);
       setErrorMessage("プロジェクトの追加に失敗しました");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -89,15 +93,20 @@ export default function ProjectCreatePage() {
           </div>
 
           <div className="projectCreateActions">
-            <button type="button"
+            <button
+              type="button"
               className="projectCreateBackButton"
               onClick={() => navigate("/projects")}
             >
               キャンセル
             </button>
 
-            <button type="submit" className="projectCreateButton">
-              追加
+            <button
+              type="submit"
+              className="projectCreateButton"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "追加中..." : "追加"}
             </button>
           </div>
         </form>
