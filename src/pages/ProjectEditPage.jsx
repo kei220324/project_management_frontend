@@ -60,9 +60,9 @@ export default function ProjectEditPage() {
         }
 
         const data = await res.json();
-        setName(data.name);
-        setSummary(data.summary);
-        setDueDate(data.due_date);
+        setName(data.name ?? "");
+        setSummary(data.summary ?? "");
+        setDueDate(data.due_date ?? "");
       } catch (e) {
         console.error(e);
         setFetchError("プロジェクトの取得に失敗しました");
