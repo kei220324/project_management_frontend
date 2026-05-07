@@ -1,16 +1,157 @@
-# React + Vite
+# Project Management Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 概要
 
-Currently, two official plugins are available:
+プロジェクトごとのタスクを管理するためのフロントエンドアプリケーションです。  
+Laravelで構築したバックエンドAPIと連携し、プロジェクトおよびタスクの作成・更新・一覧表示を行います。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## 使用技術
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React
+- JavaScript（ES6）
+- React Router
+- fetch API
+- CSS
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 主な機能
+
+- プロジェクト一覧表示
+- プロジェクト詳細表示
+- プロジェクト作成
+- プロジェクト編集
+- プロジェクト削除
+- タスク一覧表示
+- タスク追加（モーダル）
+- タスク編集（モーダル）
+- タスク完了 / 未完了切り替え
+
+---
+
+## APIとの連携
+
+Laravelで構築したAPIと通信し、データの取得・更新を行っています。
+
+### プロジェクト関連
+
+- プロジェクト一覧取得
+- プロジェクト詳細取得
+- プロジェクト作成
+- プロジェクト更新
+- プロジェクト削除
+
+### タスク関連
+
+- タスク一覧取得
+- タスク作成
+- タスク更新
+- タスク状態変更
+
+取得したデータは `useState` で管理し、state更新によって画面へ反映しています。
+
+---
+
+## コンポーネント設計
+
+ページ単位でコンポーネントを分割し、それぞれのページでデータ取得から表示・更新までを行う構成にしています。
+
+### プロジェクト一覧ページ
+
+- プロジェクト一覧取得
+- 一覧表示
+- ローディング表示
+- エラーハンドリング
+- 再読み込み処理
+- フラッシュメッセージ表示
+
+などを担当しています。
+
+### プロジェクト詳細ページ
+
+- プロジェクト詳細取得
+- タスク一覧表示
+- タスク追加
+- タスク編集
+- タスク状態更新
+- プロジェクト削除
+
+を担当しています。
+
+また、タスク追加・編集・削除確認をモーダルで管理しています。
+
+### プロジェクト作成ページ
+
+フォーム入力の状態管理を行い、バリデーション後にAPIへPOSTリクエストを送信しています。
+
+### プロジェクト編集ページ
+
+既存データを取得してフォームへ反映し、更新処理を行っています。
+
+---
+
+## 工夫した点
+
+### 状態管理とUIの同期
+
+APIから取得したデータを `useState` で管理し、タスク追加・更新時にはstateを書き換えることで即座にUIへ反映されるようにしました。
+
+一覧を毎回再取得するのではなく、更新対象のみをstate内で更新することで、不要なAPI通信を減らすよう意識しています。
+
+### エラーハンドリング
+
+API通信時にエラー状態を管理し、ユーザーへ適切なメッセージを表示するようにしました。
+
+通信失敗時には再読み込みボタンを表示し、再度データ取得を行えるようにしています。
+
+### モーダルによる操作性向上
+
+タスク追加・編集・削除確認をモーダルで行うことで、画面遷移を減らし操作性向上を意識しました。
+
+モーダルごとに入力値やエラー状態を管理し、操作終了時にはstateをリセットするよう実装しています。
+
+---
+
+## 苦労した点
+
+### API通信時の状態管理
+
+プロジェクト一覧取得時に、
+
+- 読み込み中
+- 通信成功
+- エラー発生
+
+といった状態ごとに表示を切り替える必要があり、UIの分岐処理に苦労しました。
+
+特に、
+
+- ローディング表示
+- エラーメッセージ表示
+- 通信失敗時の再読み込み処理
+
+を整理しながら実装し、ユーザーに現在の状態がわかりやすく伝わるよう意識しました。
+
+---
+## 今後の改善
+
+### コンポーネントの細分化
+
+現在はページコンポーネント内で、
+
+- API通信
+- state管理
+- UI表示
+- モーダル管理
+
+などをまとめて管理しているため、機能追加に伴いコード量が増えやすい構成になっています。
+
+今後は責務ごとにコンポーネントを分割し、可読性や保守性を向上させたいと考えています。
+
+### カスタムフックへの切り出し
+
+API通信やローディング・エラー管理など、複数ページで共通化できる処理が増えてきました。
+
+現在は各コンポーネント内に処理を書いているため、今後はカスタムフックへ切り出し、ロジックの再利用性を高めたいと考えています。
