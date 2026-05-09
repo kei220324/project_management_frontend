@@ -267,7 +267,7 @@ export default function ProjectDetailPage() {
     setSelectedTask(null);
     setEditTaskName("");
     setEditTaskDueDate("");
-    setEditTaskError(null)
+    setEditTaskError(null);
     setEditTaskNameError(null);
     setEditTaskDueDateError(null);
   };
@@ -295,6 +295,11 @@ export default function ProjectDetailPage() {
             </div>
 
             <div className="progressContainer">
+              <div className="progressHeader">
+                <span className="progressLabel">進捗</span>
+                <span className="progressPercent">{progressPercent}%</span>
+              </div>
+
               <div className="progressBar">
                 <div
                   className="progressBarFill"
@@ -343,7 +348,7 @@ export default function ProjectDetailPage() {
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <h2 className="modalTitle">タスク追加</h2>
             <form className="modalForm" onSubmit={handleAddTask}>
-             {addTaskError && <p className="modalError">{addTaskError}</p>}
+              {addTaskError && <p className="modalError">{addTaskError}</p>}
               <div className="modalField">
                 <label htmlFor="taskName">タスク名</label>
                 <input
