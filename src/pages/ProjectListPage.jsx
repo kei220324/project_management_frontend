@@ -14,35 +14,36 @@ export default function ProjectListPage() {
   const [flashMessage, setFlashMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-　const location = useLocation();
+  const location = useLocation();
   const navigate = useNavigate();
-  
+
   const projectsApiUrl = `${API_BASE_URL}/projects`;
-  const fetchProjects = () => {
+
+  const fetchProjects = async () => {
     setLoading(true);
     setError(null);
 
-     fetch(projectsApiUrl)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("データ取得に失敗しました");
-        }
-        return res.json();
-      })
-      .then((data) => {
-        setProjects(data);
-      })
-      .catch((err) => {
-        console.error(err);
-        setError(err.message);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      const res = await fetch(projectsApiUrl);
+
+      if (!res.ok) {
+        throw new Error("データ取得に失敗しました");
+      }
+
+      const data = await res.json();
+      console.log("Fetched projects:", data);
+      setProjects(data);
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchProjects();
+ 
   }, []);
 
   useEffect(() => {
@@ -103,6 +104,7 @@ export default function ProjectListPage() {
               {projects.map((project) => (
                 <tr key={project.id}>
                   <td className="projectCell">
+                    
                     <Link
                       className="projectLink"
                       to={`/projects/${project.id}`}
@@ -126,3 +128,4 @@ export default function ProjectListPage() {
     </div>
   );
 }
+
