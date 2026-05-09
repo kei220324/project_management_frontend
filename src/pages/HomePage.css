@@ -1,0 +1,48 @@
+.homePage {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: linear-gradient(135deg, #0f172a, #334155);
+}
+
+.homeCard {
+  width: 100%;
+  max-width: 720px;
+  text-align: center;
+  color: #ffffff;
+}
+
+.homeTitle {
+  font-size: clamp(2rem, 5vw, 3rem);
+  margin: 0 0 16px;
+}
+
+.homeSubtitle {
+  font-size: 1.25rem;
+  margin: 0 0 12px;
+  color: #e2e8f0;
+}
+
+.homeDescription {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #cbd5e1;
+  margin: 0 0 28px;
+}
+
+.homeButton {
+  border: 0;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  background: #ffffff;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.homeButton:hover {
+  opacity: 0.88;
+}
