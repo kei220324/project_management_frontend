@@ -30,34 +30,36 @@ export default function ProjectDetailPage() {
   const [taskDueDate, setTaskDueDate] = useState("");
   const projectDetailApiUrl = `${API_BASE_URL}/projects/${projectId}`;
 
-  const calculateProgress = (tasks) => {
-    if (tasks.length === 0) return 0;
+  const fetchProject = async ({ showLoading = false } = {}) => {
+    if (showLoading) {
+      setLoading(true);
+    }
 
-    const doneCount = tasks.filter((task) => task.is_done).length;
-    return Math.floor((doneCount / tasks.length) * 100);
+    try {
+      setError(null);
+
+      const res = await fetch(projectDetailApiUrl);
+
+      if (!res.ok) {
+        throw new Error("プロジェクトの取得に失敗しました");
+      }
+
+      const data = await res.json();
+      console.log("Fetched project data:", data);
+
+      setProject(data);
+      setTasks(data.tasks ?? []);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      if (showLoading) {
+        setLoading(false);
+      }
+    }
   };
 
   useEffect(() => {
-    const fetchProject = async () => {
-      try {
-        const res = await fetch(projectDetailApiUrl);
-
-        if (!res.ok) {
-          throw new Error("プロジェクトの取得に失敗しました");
-        }
-
-        const data = await res.json();
-
-        setProject(data);
-        setTasks(data.tasks ?? []);
-      } catch (e) {
-        setError(e.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProject();
+    fetchProject({ showLoading: true });
   }, [projectDetailApiUrl]);
 
   const openDeleteModal = () => {
@@ -134,7 +136,7 @@ export default function ProjectDetailPage() {
     );
   }
 
-  const progressPercent = calculateProgress(tasks);
+  const progressPercent = project.progress_percent ?? 0;
 
   const handleAddTask = async (e) => {
     e.preventDefault();
@@ -156,6 +158,7 @@ export default function ProjectDetailPage() {
     }
 
     if (hasError) return;
+
     try {
       const res = await fetch(`${API_BASE_URL}/projects/${projectId}/tasks`, {
         method: "POST",
@@ -172,18 +175,14 @@ export default function ProjectDetailPage() {
         throw new Error("タスクの追加に失敗しました");
       }
 
-      const newTask = await res.json();
-
-      setTasks((prevTasks) => [...prevTasks, newTask]);
-
-      setTaskName("");
-      setTaskDueDate("");
       closeAddTaskModal();
+      await fetchProject();
     } catch (e) {
       console.error("タスクの追加に失敗しました", e);
       setAddTaskError("タスクの追加に失敗しました");
     }
   };
+
   const handleToggleTaskStatus = async (taskId) => {
     try {
       const res = await fetch(`${API_BASE_URL}/tasks/${taskId}/toggle`, {
@@ -194,12 +193,7 @@ export default function ProjectDetailPage() {
         throw new Error("タスクの状態の更新に失敗しました");
       }
 
-      const updateTask = await res.json();
-      setTasks((prevTasks) =>
-        prevTasks.map((task) =>
-          task.id === updateTask.id ? updateTask : task,
-        ),
-      );
+      await fetchProject();
     } catch (e) {
       console.error(e);
     }
@@ -248,14 +242,8 @@ export default function ProjectDetailPage() {
         throw new Error("タスクの更新に失敗しました");
       }
 
-      const updatedTask = await res.json();
-      setTasks((prevTasks) =>
-        prevTasks.map((task) =>
-          task.id === updatedTask.id ? updatedTask : task,
-        ),
-      );
-
       setIsEditTaskModalOpen(false);
+      await fetchProject();
     } catch (e) {
       console.error("タスクの更新に失敗しました", e);
       setEditTaskError("タスクの更新に失敗しました");
@@ -274,7 +262,6 @@ export default function ProjectDetailPage() {
 
   return (
     <div className="page">
-      {/* ヘッダー */}
       <div className="detailHeader">
         <h1 className="detailTitle">プロジェクト詳細</h1>
         <Link to="/projects" className="backLink">
@@ -282,7 +269,6 @@ export default function ProjectDetailPage() {
         </Link>
       </div>
 
-      {/* プロジェクト概要カード */}
       <div className="card detailCard">
         <div className="projectInfoHeader">
           <div className="projectInfoContent">
@@ -329,7 +315,6 @@ export default function ProjectDetailPage() {
         </div>
       </div>
 
-      {/* タスク一覧ヘッダー */}
       <div className="taskHeader">
         <h2 className="taskTitle">タスク一覧</h2>
         <button
@@ -342,7 +327,6 @@ export default function ProjectDetailPage() {
         </button>
       </div>
 
-      {/* タスク追加モーダル */}
       {isAddTaskModalOpen && (
         <div className="modalOverlay" onClick={closeAddTaskModal}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
@@ -385,7 +369,6 @@ export default function ProjectDetailPage() {
         </div>
       )}
 
-      {/* タスクリストカード */}
       <div className="card taskCard">
         <div className="taskTableContainer">
           <table className="table taskTable">
@@ -425,6 +408,7 @@ export default function ProjectDetailPage() {
             </tbody>
           </table>
         </div>
+
         {isEditTaskModalOpen && (
           <div className="modalOverlay" onClick={closeEditTaskModal}>
             <div className="modal" onClick={(e) => e.stopPropagation()}>
@@ -497,4 +481,5 @@ export default function ProjectDetailPage() {
       )}
     </div>
   );
+
 }

@@ -31,7 +31,7 @@ export default function ProjectListPage() {
       }
 
       const data = await res.json();
-      console.log("Fetched projects:", data);
+
       setProjects(data);
     } catch (err) {
       console.error(err);
@@ -43,7 +43,6 @@ export default function ProjectListPage() {
 
   useEffect(() => {
     fetchProjects();
- 
   }, []);
 
   useEffect(() => {
@@ -104,7 +103,6 @@ export default function ProjectListPage() {
               {projects.map((project) => (
                 <tr key={project.id}>
                   <td className="projectCell">
-                    
                     <Link
                       className="projectLink"
                       to={`/projects/${project.id}`}
@@ -128,4 +126,3 @@ export default function ProjectListPage() {
     </div>
   );
 }
-
