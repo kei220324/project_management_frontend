@@ -45,7 +45,6 @@ export default function ProjectDetailPage() {
       }
 
       const data = await res.json();
-      console.log("Fetched project data:", data);
 
       setProject(data);
       setTasks(data.tasks ?? []);
@@ -168,6 +167,7 @@ export default function ProjectDetailPage() {
         body: JSON.stringify({
           name: taskName,
           due_date: taskDueDate,
+          status: "not_started",
         }),
       });
 
@@ -260,226 +260,248 @@ export default function ProjectDetailPage() {
     setEditTaskDueDateError(null);
   };
 
+
   return (
     <div className="page">
-      <div className="detailHeader">
-        <h1 className="detailTitle">プロジェクト詳細</h1>
-        <Link to="/projects" className="backLink">
-          プロジェクト一覧に戻る
-        </Link>
-      </div>
-
-      <div className="card detailCard">
-        <div className="projectInfoHeader">
-          <div className="projectInfoContent">
-            <h2 className="projectName">{project.name}</h2>
-            <p className="projectSummary">{project.summary}</p>
-
-            <div className="projectMeta">
-              <span className="metaLabel">締切日</span>
-              <span className="metaValue">{project.due_date}</span>
-            </div>
-
-            <div className="progressContainer">
-              <div className="progressHeader">
-                <span className="progressLabel">進捗</span>
-                <span className="progressPercent">{progressPercent}%</span>
-              </div>
-
-              <div className="progressBar">
-                <div
-                  className="progressBarFill"
-                  style={{ width: `${progressPercent}%` }}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="projectActions">
-            <Link to={`/projects/${project.id}/edit`} className="editLink">
-              <button className="actionButton" type="button">
-                <span className="actionIcon">✏️</span>
-                編集
-              </button>
-            </Link>
-
-            <button
-              onClick={openDeleteModal}
-              className="actionButton"
-              type="button"
-            >
-              <span className="actionIcon">🗑️</span>
-              削除
-            </button>
-          </div>
+      <div className="pageContainer">
+        <div className="detailHeader">
+          <h1 className="detailTitle">プロジェクト詳細</h1>
+          <Link to="/projects" className="backLink">
+            プロジェクト一覧に戻る
+          </Link>
         </div>
-      </div>
 
-      <div className="taskHeader">
-        <h2 className="taskTitle">タスク一覧</h2>
-        <button
-          type="button"
-          className="addTaskButton"
-          onClick={openAddTaskModal}
-        >
-          <span className="addTaskButton__icon">＋</span>
-          <span className="addTaskButton__text">タスク追加</span>
-        </button>
-      </div>
+        <div className="card detailCard">
+          <div className="projectInfoHeader">
+            <div className="projectInfoContent">
+              <h2 className="projectName">{project.name}</h2>
+              <p className="projectSummary">{project.summary}</p>
 
-      {isAddTaskModalOpen && (
-        <div className="modalOverlay" onClick={closeAddTaskModal}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <h2 className="modalTitle">タスク追加</h2>
-            <form className="modalForm" onSubmit={handleAddTask}>
-              {addTaskError && <p className="modalError">{addTaskError}</p>}
-              <div className="modalField">
-                <label htmlFor="taskName">タスク名</label>
-                <input
-                  id="taskName"
-                  type="text"
-                  placeholder="タスク名を入力"
-                  value={taskName}
-                  onChange={(e) => setTaskName(e.target.value)}
-                />
+              <div className="projectMeta">
+                <span className="metaLabel">締切日</span>
+                <span className="metaValue">{project.due_date}</span>
               </div>
-              {taskNameError && <p className="fieldError">{taskNameError}</p>}
 
-              <div className="modalField">
-                <label htmlFor="taskDueDate">締切日</label>
-                <input
-                  id="taskDueDate"
-                  type="date"
-                  value={taskDueDate}
-                  onChange={(e) => setTaskDueDate(e.target.value)}
-                />
+              <div className="progressContainer">
+                <div className="progressHeader">
+                  <span className="progressLabel">進捗</span>
+                  <span className="progressPercent">{progressPercent}%</span>
+                </div>
+
+                <div className="progressBar">
+                  <div
+                    className="progressBarFill"
+                    style={{ width: `${progressPercent}%` }}
+                  />
+                </div>
               </div>
-              {taskDueDateError && (
-                <p className="fieldError">{taskDueDateError}</p>
-              )}
+            </div>
 
-              <div className="modalActions">
-                <button type="button" onClick={closeAddTaskModal}>
-                  キャンセル
+            <div className="projectActions">
+              <Link to={`/projects/${project.id}/edit`} className="editLink">
+                <button className="actionButton" type="button">
+                  <span className="actionIcon">✏️</span>
+                  プロジェクト編集
                 </button>
-                <button type="submit">追加</button>
-              </div>
-            </form>
+              </Link>
+
+              <button
+                onClick={openDeleteModal}
+                className="actionButton"
+                type="button"
+              >
+                <span className="actionIcon">🗑️</span>
+                プロジェクト削除
+              </button>
+            </div>
           </div>
         </div>
-      )}
 
-      <div className="card taskCard">
-        <div className="taskTableContainer">
-          <table className="table taskTable">
-            <thead>
-              <tr>
-                <th className="colTaskName">タスク名</th>
-                <th className="colTaskStatus">状況</th>
-                <th className="colTaskDue">締切日</th>
-                <th className="colTaskAction">操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tasks.map((task) => (
-                <tr key={task.id}>
-                  <td className="taskNameCell">{task.name}</td>
-                  <td className="taskStatusCell">
-                    <button
-                      onClick={() => handleToggleTaskStatus(task.id)}
-                      type="button"
-                      className={`taskStatusButton ${task.is_done ? "isDone" : "isTodo"}`}
-                    >
-                      {task.is_done ? "完了" : "未完了"}
-                    </button>
-                  </td>
-                  <td className="taskDueCell">{task.due_date}</td>
-                  <td className="taskActionCell">
-                    <button
-                      className="editTaskButton"
-                      onClick={() => openEditTaskModal(task)}
-                      type="button"
-                    >
-                      編集
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="taskHeader">
+          <h2 className="taskTitle">タスク一覧</h2>
+          <button
+            type="button"
+            className="addTaskButton"
+            onClick={openAddTaskModal}
+          >
+            <span className="addTaskButton__icon">＋</span>
+            <span className="addTaskButton__text">タスク追加</span>
+          </button>
         </div>
 
-        {isEditTaskModalOpen && (
-          <div className="modalOverlay" onClick={closeEditTaskModal}>
+        {isAddTaskModalOpen && (
+          <div className="modalOverlay" onClick={closeAddTaskModal}>
             <div className="modal" onClick={(e) => e.stopPropagation()}>
-              <h2 className="modalTitle">タスク編集</h2>
-
-              <form onSubmit={handleEditTask}>
-                {editTaskError && <p className="modalError">{editTaskError}</p>}
-
+              <h2 className="modalTitle">タスク追加</h2>
+              <form className="modalForm" onSubmit={handleAddTask}>
+                {addTaskError && <p className="modalError">{addTaskError}</p>}
                 <div className="modalField">
-                  <label htmlFor="editTaskName">タスク名</label>
+                  <label htmlFor="taskName">タスク名</label>
                   <input
-                    id="editTaskName"
+                    id="taskName"
                     type="text"
-                    value={editTaskName}
-                    onChange={(e) => setEditTaskName(e.target.value)}
+                    placeholder="タスク名を入力"
+                    value={taskName}
+                    onChange={(e) => setTaskName(e.target.value)}
                   />
                 </div>
-                {editTaskNameError && (
-                  <p className="fieldError">{editTaskNameError}</p>
-                )}
+                {taskNameError && <p className="fieldError">{taskNameError}</p>}
 
                 <div className="modalField">
-                  <label htmlFor="editTaskDueDate">締切日</label>
+                  <label htmlFor="taskDueDate">締切日</label>
                   <input
-                    id="editTaskDueDate"
+                    id="taskDueDate"
                     type="date"
-                    value={editTaskDueDate}
-                    onChange={(e) => setEditTaskDueDate(e.target.value)}
+                    value={taskDueDate}
+                    onChange={(e) => setTaskDueDate(e.target.value)}
                   />
                 </div>
-                {editTaskDueDateError && (
-                  <p className="fieldError">{editTaskDueDateError}</p>
+                {taskDueDateError && (
+                  <p className="fieldError">{taskDueDateError}</p>
                 )}
 
                 <div className="modalActions">
-                  <button type="button" onClick={closeEditTaskModal}>
+                  <button type="button" onClick={closeAddTaskModal}>
                     キャンセル
                   </button>
-                  <button type="submit">更新</button>
+                  <button type="submit">追加</button>
                 </div>
               </form>
             </div>
           </div>
         )}
-      </div>
 
-      {isDeleteModalOpen && (
-        <div className="modalOverlay">
-          <div className="modal">
-            <p>本当に削除しますか？</p>
-            {deleteError && <p className="modalError">{deleteError}</p>}
-            <div className="modalActions">
-              <button
-                type="button"
-                onClick={closeDeleteModal}
-                disabled={isDeleting}
-              >
-                キャンセル
-              </button>
-              <button
-                type="button"
-                onClick={handleDelete}
-                disabled={isDeleting}
-              >
-                {isDeleting ? "削除中..." : "OK"}
-              </button>
+        <div className="card taskCard">
+          <div className="taskTableContainer">
+            <table className="table taskTable">
+              <thead>
+                <tr>
+                  <th className="colTaskName">タスク名</th>
+                  <th className="colTaskStatus">ステータス</th>
+                  <th className="colTaskProgress">進捗</th>
+                  <th className="colTaskCreated">作成日</th>
+                  <th className="colTaskDue">締切日</th>
+                  <th className="colTaskAssignee">担当者</th>
+                  <th className="colTaskAction">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tasks.map((task) => (
+                  <tr key={task.id}>
+                    <td className="taskNameCell">{task.name}</td>
+
+                    <td className="taskStatusCell">
+                      <select
+                        className="taskStatusSelect"
+                        defaultValue={task.status ?? "not_started"}
+                      >
+                        <option value="not_started">未着手</option>
+                        <option value="in_progress">進行中</option>
+                        <option value="in_review">レビュー中</option>
+                        <option value="completed">完了</option>
+                      </select>
+                    </td>
+
+                    <td className="taskProgressCell">—</td>
+
+                    <td className="taskCreatedCell">
+                      {task.created_at
+                        ? new Date(task.created_at).toLocaleDateString("ja-JP")
+                        : "—"}
+                    </td>
+
+                    <td className="taskDueCell">{task.due_date ?? "—"}</td>
+
+                    <td className="taskAssigneeCell">—</td>
+
+                    <td className="taskActionCell">
+                      <button
+                        className="editTaskButton"
+                        onClick={() => openEditTaskModal(task)}
+                        type="button"
+                      >
+                        編集
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {isEditTaskModalOpen && (
+            <div className="modalOverlay" onClick={closeEditTaskModal}>
+              <div className="modal" onClick={(e) => e.stopPropagation()}>
+                <h2 className="modalTitle">タスク編集</h2>
+
+                <form onSubmit={handleEditTask}>
+                  {editTaskError && (
+                    <p className="modalError">{editTaskError}</p>
+                  )}
+
+                  <div className="modalField">
+                    <label htmlFor="editTaskName">タスク名</label>
+                    <input
+                      id="editTaskName"
+                      type="text"
+                      value={editTaskName}
+                      onChange={(e) => setEditTaskName(e.target.value)}
+                    />
+                  </div>
+                  {editTaskNameError && (
+                    <p className="fieldError">{editTaskNameError}</p>
+                  )}
+
+                  <div className="modalField">
+                    <label htmlFor="editTaskDueDate">締切日</label>
+                    <input
+                      id="editTaskDueDate"
+                      type="date"
+                      value={editTaskDueDate}
+                      onChange={(e) => setEditTaskDueDate(e.target.value)}
+                    />
+                  </div>
+                  {editTaskDueDateError && (
+                    <p className="fieldError">{editTaskDueDateError}</p>
+                  )}
+
+                  <div className="modalActions">
+                    <button type="button" onClick={closeEditTaskModal}>
+                      キャンセル
+                    </button>
+                    <button type="submit">更新</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {isDeleteModalOpen && (
+          <div className="modalOverlay">
+            <div className="modal">
+              <p>本当に削除しますか？</p>
+              {deleteError && <p className="modalError">{deleteError}</p>}
+              <div className="modalActions">
+                <button
+                  type="button"
+                  onClick={closeDeleteModal}
+                  disabled={isDeleting}
+                >
+                  キャンセル
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? "削除中..." : "OK"}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
-
 }

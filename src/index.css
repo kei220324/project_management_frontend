@@ -11,10 +11,15 @@ body {
   color: #111827;
 }
 
+.pageContainer {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
 /* 外枠カード */
 .card {
-  max-width: 1040px;
-  margin: 0 auto;
+  width: 100%;
   background: #ffffff;
   border: 1px solid #e6eef8;
   border-radius: 12px;

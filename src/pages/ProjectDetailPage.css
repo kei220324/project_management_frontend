@@ -1,10 +1,11 @@
 /* プロジェクト詳細画面 */
 .detailHeader {
-  max-width: 1040px;
-  margin: 0 auto 24px;
+  width: 100%;
+  margin-bottom: 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 24px;
 }
 
 .detailTitle {
@@ -295,115 +296,78 @@
   cursor: pointer;
 }
 
-/* タスクリストカード */
-.taskCard {
-  padding: 28px;
-}
-
 .taskTableContainer {
-  margin-bottom: 24px;
+  width: 100%;
+  overflow-x: auto;
 }
 
-.colTaskName {
-  width: 35%;
+.taskTable {
+  width: 100%;
+  min-width: 900px;
+  table-layout: fixed;
+  border-collapse: collapse;
 }
 
-.colTaskStatus {
-  width: 20%;
-}
-
-.colTaskDue {
-  width: 25%;
-}
-
-.colTaskAction {
-  width: 20%;
-}
-
-.taskStatusCell,
-.taskActionCell {
+.taskTable th,
+.taskTable td {
+  padding: 16px 12px;
+  text-align: left;
   vertical-align: middle;
 }
 
-/* 状況ボタン */
-.taskStatusButton {
-  min-width: 118px;
-  height: 48px;
-  padding: 0 24px;
-  border: none;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1;
+.taskTable th {
+  white-space: nowrap;
+}
+
+/* 合計100% */
+.colTaskName {
+  width: 23%;
+}
+
+.colTaskStatus {
+  width: 16%;
+}
+
+.colTaskProgress {
+  width: 10%;
+}
+
+.colTaskCreated {
+  width: 13%;
+}
+
+.colTaskDue {
+  width: 14%;
+}
+
+.colTaskAssignee {
+  width: 12%;
+}
+
+.colTaskAction {
+  width: 12%;
+}
+
+.taskStatusSelect {
+  width: 128px;
+  max-width: 100%;
+  padding: 8px 10px;
+  box-sizing: border-box;
+  color: #1f2937;
+  background-color: #fff;
+  border: 1px solid #d6dce8;
+  border-radius: 8px;
+  font-size: 14px;
   cursor: pointer;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    opacity 0.2s ease;
 }
 
-.taskStatusButton.isTodo {
-  background: #e5e7eb;
-  color: #374151;
+.taskStatusSelect:focus {
+  border-color: #2563eb;
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 15%);
 }
 
-.taskStatusButton.isDone {
-  background: #d1fae5;
-  color: #047857;
-}
-
-.taskStatusButton:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
-}
-
-.taskStatusButton:active {
-  transform: translateY(0);
-}
-
-.taskStatusButton:focus-visible {
-  outline: 3px solid rgba(47, 111, 228, 0.25);
-  outline-offset: 2px;
-}
-
-/* 編集ボタン */
-.editTaskButton {
-  min-width: 74px;
-  height: 44px;
-  padding: 0 18px;
-  border: none;
-  border-radius: 999px;
-  background: #f3f4f6;
-  color: #374151;
-  font-size: 15px;
-  font-weight: 700;
-  line-height: 1;
-  cursor: pointer;
-  transition:
-    background 0.2s ease,
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.editTaskButton:hover {
-  background: #e5e7eb;
-  transform: translateY(-1px);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
-}
-
-.editTaskButton:active {
-  transform: translateY(0);
-}
-
-.editTaskButton:focus-visible {
-  outline: 3px solid rgba(47, 111, 228, 0.2);
-  outline-offset: 2px;
-}
-
-/* 完了タスク行を少し落ち着かせる場合に使える */
-.doneRow {
-  opacity: 0.78;
+.taskCreatedCell,
+.taskDueCell {
+  white-space: nowrap;
 }
