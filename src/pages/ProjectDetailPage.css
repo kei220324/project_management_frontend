@@ -318,30 +318,26 @@
 .taskTable th {
   white-space: nowrap;
 }
-
 /* 合計100% */
+
 .colTaskName {
-  width: 23%;
+  width: 25%;
 }
 
 .colTaskStatus {
-  width: 16%;
+  width: 17%;
 }
 
 .colTaskProgress {
-  width: 10%;
-}
-
-.colTaskCreated {
-  width: 13%;
+  width: 11%;
 }
 
 .colTaskDue {
-  width: 14%;
+  width: 17%;
 }
 
 .colTaskAssignee {
-  width: 12%;
+  width: 18%;
 }
 
 .colTaskAction {
@@ -375,7 +371,6 @@
 .taskStatusSelect:focus {
   box-shadow: 0 0 0 3px rgb(37 99 235 / 15%);
 }
-
 
 /* 未着手 */
 .taskStatusSelect.status-not_started {

@@ -400,7 +400,7 @@ export default function ProjectDetailPage() {
                   <th className="colTaskName">タスク名</th>
                   <th className="colTaskStatus">ステータス</th>
                   <th className="colTaskProgress">進捗</th>
-                  <th className="colTaskCreated">作成日</th>
+                 
                   <th className="colTaskDue">締切日</th>
                   <th className="colTaskAssignee">担当者</th>
                   <th className="colTaskAction">操作</th>
