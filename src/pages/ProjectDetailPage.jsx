@@ -260,6 +260,27 @@ export default function ProjectDetailPage() {
     setEditTaskDueDateError(null);
   };
 
+  const handleChangeTaskStatus = async (taskId, status) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/tasks/${taskId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          status: status,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("ステータスの更新に失敗しました");
+      }
+
+      await fetchProject();
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   return (
     <div className="page">
@@ -392,8 +413,10 @@ export default function ProjectDetailPage() {
 
                     <td className="taskStatusCell">
                       <select
-                        className="taskStatusSelect"
-                        defaultValue={task.status ?? "not_started"}
+                        className={`taskStatusSelect status-${task.status ?? "not_started"}`}
+                        onChange={(e) =>
+                          handleChangeTaskStatus(task.id, e.target.value)
+                        }
                       >
                         <option value="not_started">未着手</option>
                         <option value="in_progress">進行中</option>

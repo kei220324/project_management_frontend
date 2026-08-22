@@ -371,3 +371,32 @@
 .taskDueCell {
   white-space: nowrap;
 }
+
+.taskStatusSelect:focus {
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 15%);
+}
+
+
+/* 未着手 */
+.taskStatusSelect.status-not_started {
+  color: #475569;
+  background-color: #f1f5f9;
+}
+
+/* 進行中 */
+.taskStatusSelect.status-in_progress {
+  color: #2563eb;
+  background-color: #e6f0ff;
+}
+
+/* レビュー中 */
+.taskStatusSelect.status-in_review {
+  color: #f59e0b;
+  background-color: #fff3d6;
+}
+
+/* 完了 */
+.taskStatusSelect.status-completed {
+  color: #10b981;
+  background-color: #dcfce7;
+}
