@@ -27,6 +27,7 @@ export default function ProjectDetailPage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
   const [taskName, setTaskName] = useState("");
+  const [taskDescription, setTaskDescription] = useState("");
   const [taskDueDate, setTaskDueDate] = useState("");
   const projectDetailApiUrl = `${API_BASE_URL}/projects/${projectId}`;
 
@@ -167,6 +168,7 @@ export default function ProjectDetailPage() {
         body: JSON.stringify({
           name: taskName,
           due_date: taskDueDate,
+          description: taskDescription,
           status: "not_started",
         }),
       });
@@ -368,6 +370,17 @@ export default function ProjectDetailPage() {
                 </div>
                 {taskNameError && <p className="fieldError">{taskNameError}</p>}
 
+                <div className="formGroup">
+                  <label htmlFor="taskDescription">概要（任意）</label>
+                  <textarea
+                    id="taskDescription"
+                    value={taskDescription}
+                    onChange={(e) => setTaskDescription(e.target.value)}
+                    placeholder="タスクの内容や完了条件を入力"
+                    rows={4}
+                  />
+                </div>
+
                 <div className="modalField">
                   <label htmlFor="taskDueDate">締切日</label>
                   <input
@@ -400,7 +413,6 @@ export default function ProjectDetailPage() {
                   <th className="colTaskName">タスク名</th>
                   <th className="colTaskStatus">ステータス</th>
                   <th className="colTaskProgress">進捗</th>
-                 
                   <th className="colTaskDue">締切日</th>
                   <th className="colTaskAssignee">担当者</th>
                   <th className="colTaskAction">操作</th>
