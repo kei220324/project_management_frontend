@@ -29,6 +29,11 @@ export default function ProjectDetailPage() {
   const [taskName, setTaskName] = useState("");
   const [taskDescription, setTaskDescription] = useState("");
   const [taskDueDate, setTaskDueDate] = useState("");
+  const [taskCheckItems, setTaskCheckItems] = useState([]);
+
+  const [isAddingCheckItem, setIsAddingCheckItem] = useState(false);
+  const [newCheckItemTitle, setNewCheckItemTitle] = useState("");
+
   const projectDetailApiUrl = `${API_BASE_URL}/projects/${projectId}`;
 
   const fetchProject = async ({ showLoading = false } = {}) => {
@@ -169,6 +174,7 @@ export default function ProjectDetailPage() {
           name: taskName,
           due_date: taskDueDate,
           description: taskDescription,
+
           status: "not_started",
         }),
       });
@@ -185,21 +191,21 @@ export default function ProjectDetailPage() {
     }
   };
 
-  const handleToggleTaskStatus = async (taskId) => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/tasks/${taskId}/toggle`, {
-        method: "PATCH",
-      });
+  // const handleToggleTaskStatus = async (taskId) => {
+  //   try {
+  //     const res = await fetch(`${API_BASE_URL}/tasks/${taskId}/toggle`, {
+  //       method: "PATCH",
+  //     });
 
-      if (!res.ok) {
-        throw new Error("タスクの状態の更新に失敗しました");
-      }
+  //     if (!res.ok) {
+  //       throw new Error("タスクの状態の更新に失敗しました");
+  //     }
 
-      await fetchProject();
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  //     await fetchProject();
+  //   } catch (e) {
+  //     console.error(e);
+  //   }
+  // };
 
   const openEditTaskModal = (task) => {
     setSelectedTask(task);
@@ -283,6 +289,62 @@ export default function ProjectDetailPage() {
       console.error(e);
     }
   };
+
+  const openTaskDetailPanel = (task) => {
+    setSelectedTask(task);
+    fetchTaskCheckItems(task.id);
+  };
+
+  const fetchTaskCheckItems = async (taskId) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/tasks/${taskId}/check-items`);
+      if (!res.ok) {
+        throw new Error("チェック項目の取得に失敗しました");
+      }
+      const data = await res.json();
+      setTaskCheckItems(data);
+    } catch (e) {
+      console.error("チェック項目の取得に失敗しました", e);
+    }
+  };
+
+  const openAddCheckItemInput = () => {
+    setIsAddingCheckItem(true);
+  };
+
+const addCheckItem = async (taskId) => {
+  try {
+    const res = await fetch(
+      `${API_BASE_URL}/tasks/${taskId}/check-items`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: newCheckItemTitle,
+        }),
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message ?? "チェック項目の追加に失敗しました");
+    }
+
+    // 最新のチェックリストを再取得する
+    await fetchTaskCheckItems(taskId);
+
+    // 入力欄を空にする
+    setNewCheckItemTitle("");
+
+    // 追加用の入力欄を閉じる
+    setIsAddingCheckItem(false);
+  } catch (e) {
+    console.error("チェック項目の追加に失敗しました", e);
+  }
+}
 
   return (
     <div className="page">
@@ -413,6 +475,7 @@ export default function ProjectDetailPage() {
                   <th className="colTaskName">タスク名</th>
                   <th className="colTaskStatus">ステータス</th>
                   <th className="colTaskProgress">進捗</th>
+
                   <th className="colTaskDue">締切日</th>
                   <th className="colTaskAssignee">担当者</th>
                   <th className="colTaskAction">操作</th>
@@ -439,23 +502,17 @@ export default function ProjectDetailPage() {
 
                     <td className="taskProgressCell">—</td>
 
-                    <td className="taskCreatedCell">
-                      {task.created_at
-                        ? new Date(task.created_at).toLocaleDateString("ja-JP")
-                        : "—"}
-                    </td>
-
                     <td className="taskDueCell">{task.due_date ?? "—"}</td>
 
                     <td className="taskAssigneeCell">—</td>
 
                     <td className="taskActionCell">
                       <button
-                        className="editTaskButton"
-                        onClick={() => openEditTaskModal(task)}
                         type="button"
+                        className="taskDetailButton"
+                        onClick={() => openTaskDetailPanel(task)}
                       >
-                        編集
+                        詳細
                       </button>
                     </td>
                   </tr>
@@ -463,6 +520,138 @@ export default function ProjectDetailPage() {
               </tbody>
             </table>
           </div>
+          {selectedTask && (
+            <>
+              <div
+                className="taskDetailOverlay"
+                onClick={() => setSelectedTask(null)}
+              />
+              <aside className="taskDetailPanel">
+                <header className="taskDetailHeader">
+                  <h2 className="taskDetailTitle">{selectedTask.name}</h2>
+
+                  <button
+                    type="button"
+                    className="taskDetailCloseButton"
+                    onClick={() => setSelectedTask(null)}
+                    aria-label="詳細を閉じる"
+                  >
+                    ×
+                  </button>
+                </header>
+                {/* 概要 */}
+                <section className="taskDetailSection">
+                  <h3 className="taskDetailSectionTitle">概要</h3>
+                  <p className="taskDetailDescription">
+                    {selectedTask.description || "概要はありません"}
+                  </p>
+                </section>
+                <section className="taskDetailSection">
+                  <div className="taskDetailStatusRow">
+                    <h3 className="taskDetailSectionTitle">ステータス</h3>
+                    {selectedTask.status}
+                  </div>
+                  <div className="taskDetailProgressHeader">
+                    <span>進捗</span>
+                    <span>{selectedTask.progress_percent ?? 0}%</span>
+                  </div>
+
+                  <div className="taskDetailProgressBar">
+                    <div
+                      className="taskDetailProgressValue"
+                      style={{
+                        width: `${selectedTask.progress_percent ?? 0}%`,
+                      }}
+                    />
+                  </div>
+                </section>
+                {/* チェックリスト */}
+                <section className="taskDetailSection">
+                  <h3 className="taskDetailSectionTitle">作業チェックリスト</h3>
+
+                  {taskCheckItems.length === 0 ? (
+                    <p>チェック項目はありません</p>
+                  ) : (
+                    <ul className="taskCheckItemList">
+                      {taskCheckItems.map((item) => (
+                        <li key={item.id}>
+                          <input
+                            type="checkbox"
+                            checked={item.is_done}
+                            readOnly
+                          />
+                          <span>{item.title}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  {isAddingCheckItem ? (
+                    <div className="checkItemAddForm">
+                      <input
+                        type="text"
+                        value={newCheckItemTitle}
+                        onChange={(e) => setNewCheckItemTitle(e.target.value)}
+                        placeholder="項目名を入力"
+                        autoFocus
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() => addCheckItem(selectedTask.id)}
+                      >
+                        追加
+                      </button>
+
+                      {/* <button type="button" onClick={cancelAddCheckItem}>
+                        キャンセル
+                      </button> */}
+                    </div>
+                  ) : (
+                    <button type="button" onClick={openAddCheckItemInput}>
+                      ＋ 項目を追加
+                    </button>
+                  )}
+                </section>
+
+                {/* タスク情報 */}
+                <section className="taskDetailSection">
+                  <dl className="taskDetailInfoList">
+                    <div>
+                      <dt>担当者</dt>
+                      <dd>{selectedTask.assignee ?? "—"}</dd>
+                    </div>
+
+                    <div>
+                      <dt>作成日</dt>
+                      <dd>{selectedTask.created_at ?? "—"}</dd>
+                    </div>
+
+                    <div>
+                      <dt>締切日</dt>
+                      <dd>{selectedTask.due_date ?? "—"}</dd>
+                    </div>
+                  </dl>
+                </section>
+                {/* 操作ボタン */}
+                <footer className="taskDetailActions">
+                  <button
+                    type="button"
+                    onClick={() => openEditTaskModal(selectedTask)}
+                  >
+                    タスク編集
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => openDeleteTaskModal(selectedTask)}
+                  >
+                    タスク削除
+                  </button>
+                </footer>
+              </aside>
+            </>
+          )}
 
           {isEditTaskModalOpen && (
             <div className="modalOverlay" onClick={closeEditTaskModal}>

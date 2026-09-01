@@ -424,3 +424,46 @@
   color: #10b981;
   background-color: #dcfce7;
 }
+
+.taskDetailPanel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 460px;
+  height: 100vh;
+  padding: 32px;
+  background-color: #fff;
+  box-sizing: border-box;
+  overflow-y: auto;
+  z-index: 1001;
+  box-shadow: -8px 0 24px rgba(15, 23, 42, 0.12);
+}
+.taskDetailOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.3);
+  z-index: 1000;
+}
+.taskDetailHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.taskDetailTitle {
+  margin: 0;
+  font-size: 26px;
+  line-height: 1.4;
+  color: #0f172a;
+}
+
+.taskDetailCloseButton {
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  color: #334155;
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+}
