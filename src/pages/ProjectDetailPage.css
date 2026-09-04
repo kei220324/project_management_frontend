@@ -467,3 +467,44 @@
   line-height: 1;
   cursor: pointer;
 }
+
+.taskCheckItemList {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.taskCheckItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 40px;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+
+.taskCheckItem:hover {
+  background-color: #f8fafc;
+}
+
+.taskCheckItemContent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.taskCheckItemDeleteButton {
+  opacity: 0;
+  visibility: hidden;
+  padding: 4px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.taskCheckItem:hover .taskCheckItemDeleteButton,
+.taskCheckItem:focus-within .taskCheckItemDeleteButton {
+  opacity: 1;
+  visibility: visible;
+}

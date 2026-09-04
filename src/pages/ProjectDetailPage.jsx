@@ -312,11 +312,9 @@ export default function ProjectDetailPage() {
     setIsAddingCheckItem(true);
   };
 
-const addCheckItem = async (taskId) => {
-  try {
-    const res = await fetch(
-      `${API_BASE_URL}/tasks/${taskId}/check-items`,
-      {
+  const addCheckItem = async (taskId) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/tasks/${taskId}/check-items`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -324,27 +322,47 @@ const addCheckItem = async (taskId) => {
         body: JSON.stringify({
           title: newCheckItemTitle,
         }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message ?? "チェック項目の追加に失敗しました");
       }
-    );
 
-    const data = await res.json();
+      // 最新のチェックリストを再取得する
+      await fetchTaskCheckItems(taskId);
 
-    if (!res.ok) {
-      throw new Error(data.message ?? "チェック項目の追加に失敗しました");
+      // 入力欄を空にする
+      setNewCheckItemTitle("");
+
+      // 追加用の入力欄を閉じる
+      setIsAddingCheckItem(false);
+    } catch (e) {
+      console.error("チェック項目の追加に失敗しました", e);
     }
+  };
 
-    // 最新のチェックリストを再取得する
-    await fetchTaskCheckItems(taskId);
+  const deleteCheckItem = async (checkItemId) => {
+  
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/tasks/${selectedTask.id}/check-items/${checkItemId}`,
+        {
+          method: "DELETE",
+        },
+      );
 
-    // 入力欄を空にする
-    setNewCheckItemTitle("");
+      if (!res.ok) {
+        throw new Error("チェック項目の削除に失敗しました");
+      }
 
-    // 追加用の入力欄を閉じる
-    setIsAddingCheckItem(false);
-  } catch (e) {
-    console.error("チェック項目の追加に失敗しました", e);
-  }
-}
+      // 削除後の最新チェックリストを取得
+      await fetchTaskCheckItems(selectedTask.id);
+    } catch (e) {
+      console.error("チェック項目の削除に失敗しました", e);
+    }
+  };
 
   return (
     <div className="page">
@@ -574,13 +592,23 @@ const addCheckItem = async (taskId) => {
                   ) : (
                     <ul className="taskCheckItemList">
                       {taskCheckItems.map((item) => (
-                        <li key={item.id}>
-                          <input
-                            type="checkbox"
-                            checked={item.is_done}
-                            readOnly
-                          />
-                          <span>{item.title}</span>
+                        <li key={item.id} className="taskCheckItem">
+                          <div className="taskCheckItemContent">
+                            <input
+                              type="checkbox"
+                              checked={item.is_done}
+                              readOnly
+                            />
+                            <span>{item.title}</span>
+                          </div>
+                          <button
+                            type="button"
+                            className="taskCheckItemDeleteButton"
+                            onClick={() => deleteCheckItem(item.id)}
+                            aria-label={`${item.title}を削除`}
+                          >
+                            🗑️
+                          </button>
                         </li>
                       ))}
                     </ul>
@@ -620,11 +648,6 @@ const addCheckItem = async (taskId) => {
                     <div>
                       <dt>担当者</dt>
                       <dd>{selectedTask.assignee ?? "—"}</dd>
-                    </div>
-
-                    <div>
-                      <dt>作成日</dt>
-                      <dd>{selectedTask.created_at ?? "—"}</dd>
                     </div>
 
                     <div>
