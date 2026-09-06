@@ -20,16 +20,18 @@ export default function ProjectDetailPage() {
   const [editTaskNameError, setEditTaskNameError] = useState(null);
   const [editTaskDueDateError, setEditTaskDueDateError] = useState(null);
 
-  const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
+  const [isTaskEditing, setIsTaskEditing] = useState(false);
   const [editTaskName, setEditTaskName] = useState("");
   const [editTaskDueDate, setEditTaskDueDate] = useState("");
   const [selectedTask, setSelectedTask] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
   const [taskName, setTaskName] = useState("");
-  const [taskDescription, setTaskDescription] = useState("");
+  const [editTaskDescription, setEditTaskDescription] = useState("");
   const [taskDueDate, setTaskDueDate] = useState("");
   const [taskCheckItems, setTaskCheckItems] = useState([]);
+  const [description, setDescription] = useState("");
+  const [descriptionError, setDescriptionError] = useState(null);
 
   const [isAddingCheckItem, setIsAddingCheckItem] = useState(false);
   const [newCheckItemTitle, setNewCheckItemTitle] = useState("");
@@ -54,8 +56,10 @@ export default function ProjectDetailPage() {
 
       setProject(data);
       setTasks(data.tasks ?? []);
+      return data;
     } catch (e) {
       setError(e.message);
+      return null;
     } finally {
       if (showLoading) {
         setLoading(false);
@@ -172,8 +176,8 @@ export default function ProjectDetailPage() {
         },
         body: JSON.stringify({
           name: taskName,
+          description: description,
           due_date: taskDueDate,
-          description: taskDescription,
 
           status: "not_started",
         }),
@@ -207,11 +211,16 @@ export default function ProjectDetailPage() {
   //   }
   // };
 
-  const openEditTaskModal = (task) => {
-    setSelectedTask(task);
-    setEditTaskName(task.name);
-    setEditTaskDueDate(task.due_date);
-    setIsEditTaskModalOpen(true);
+  const startTaskEditing = (task) => {
+   
+    setEditTaskName(task.name ?? "");
+    
+    setEditTaskDescription(task.description ?? "");
+    setEditTaskDueDate(task.due_date ?? "");
+    // setEditTaskError(null);
+    // setEditTaskNameError(null);
+    // setEditTaskDueDateError(null);
+    setIsTaskEditing(true);
   };
 
   const handleEditTask = async (e) => {
@@ -242,6 +251,7 @@ export default function ProjectDetailPage() {
         },
         body: JSON.stringify({
           name: editTaskName,
+          description: editTaskDescription,
           due_date: editTaskDueDate,
         }),
       });
@@ -250,17 +260,22 @@ export default function ProjectDetailPage() {
         throw new Error("タスクの更新に失敗しました");
       }
 
-      setIsEditTaskModalOpen(false);
-      await fetchProject();
+      const updatedTask = await res.json();
+      const refreshedProject = await fetchProject();
+      const refreshedTask = refreshedProject?.tasks?.find(
+        (task) => task.id === updatedTask.id,
+      );
+
+      setSelectedTask(refreshedTask ?? updatedTask);
+      setIsTaskEditing(false);
     } catch (e) {
       console.error("タスクの更新に失敗しました", e);
       setEditTaskError("タスクの更新に失敗しました");
     }
   };
 
-  const closeEditTaskModal = () => {
-    setIsEditTaskModalOpen(false);
-    setSelectedTask(null);
+  const cancelTaskEditing = () => {
+    setIsTaskEditing(false);
     setEditTaskName("");
     setEditTaskDueDate("");
     setEditTaskError(null);
@@ -284,15 +299,33 @@ export default function ProjectDetailPage() {
         throw new Error("ステータスの更新に失敗しました");
       }
 
-      await fetchProject();
+      const updatedTask = await res.json();
+      const refreshedProject = await fetchProject();
+      const refreshedTask = refreshedProject?.tasks?.find(
+        (task) => task.id === updatedTask.id,
+      );
+
+      if (selectedTask?.id === updatedTask.id) {
+        setSelectedTask(refreshedTask ?? updatedTask);
+      }
     } catch (e) {
       console.error(e);
     }
   };
 
   const openTaskDetailPanel = (task) => {
+    console.log(task);
     setSelectedTask(task);
+    setIsTaskEditing(false);
+    setEditTaskError(null);
+    setEditTaskNameError(null);
+    setEditTaskDueDateError(null);
     fetchTaskCheckItems(task.id);
+  };
+
+  const closeTaskDetailPanel = () => {
+    setSelectedTask(null);
+    cancelTaskEditing();
   };
 
   const fetchTaskCheckItems = async (taskId) => {
@@ -344,7 +377,6 @@ export default function ProjectDetailPage() {
   };
 
   const deleteCheckItem = async (checkItemId) => {
-  
     try {
       const res = await fetch(
         `${API_BASE_URL}/tasks/${selectedTask.id}/check-items/${checkItemId}`,
@@ -451,11 +483,11 @@ export default function ProjectDetailPage() {
                 {taskNameError && <p className="fieldError">{taskNameError}</p>}
 
                 <div className="formGroup">
-                  <label htmlFor="taskDescription">概要（任意）</label>
+                  <label htmlFor="editTaskDescription">概要（任意）</label>
                   <textarea
-                    id="taskDescription"
-                    value={taskDescription}
-                    onChange={(e) => setTaskDescription(e.target.value)}
+                    id="TaskDescription"
+                    value={editTaskDescription}
+                    onChange={(e) => setEditTaskDescription(e.target.value)}
                     placeholder="タスクの内容や完了条件を入力"
                     rows={4}
                   />
@@ -542,185 +574,245 @@ export default function ProjectDetailPage() {
             <>
               <div
                 className="taskDetailOverlay"
-                onClick={() => setSelectedTask(null)}
+                onClick={closeTaskDetailPanel}
               />
+
               <aside className="taskDetailPanel">
-                <header className="taskDetailHeader">
-                  <h2 className="taskDetailTitle">{selectedTask.name}</h2>
-
-                  <button
-                    type="button"
-                    className="taskDetailCloseButton"
-                    onClick={() => setSelectedTask(null)}
-                    aria-label="詳細を閉じる"
-                  >
-                    ×
-                  </button>
-                </header>
-                {/* 概要 */}
-                <section className="taskDetailSection">
-                  <h3 className="taskDetailSectionTitle">概要</h3>
-                  <p className="taskDetailDescription">
-                    {selectedTask.description || "概要はありません"}
-                  </p>
-                </section>
-                <section className="taskDetailSection">
-                  <div className="taskDetailStatusRow">
-                    <h3 className="taskDetailSectionTitle">ステータス</h3>
-                    {selectedTask.status}
-                  </div>
-                  <div className="taskDetailProgressHeader">
-                    <span>進捗</span>
-                    <span>{selectedTask.progress_percent ?? 0}%</span>
-                  </div>
-
-                  <div className="taskDetailProgressBar">
-                    <div
-                      className="taskDetailProgressValue"
-                      style={{
-                        width: `${selectedTask.progress_percent ?? 0}%`,
-                      }}
-                    />
-                  </div>
-                </section>
-                {/* チェックリスト */}
-                <section className="taskDetailSection">
-                  <h3 className="taskDetailSectionTitle">作業チェックリスト</h3>
-
-                  {taskCheckItems.length === 0 ? (
-                    <p>チェック項目はありません</p>
-                  ) : (
-                    <ul className="taskCheckItemList">
-                      {taskCheckItems.map((item) => (
-                        <li key={item.id} className="taskCheckItem">
-                          <div className="taskCheckItemContent">
-                            <input
-                              type="checkbox"
-                              checked={item.is_done}
-                              readOnly
-                            />
-                            <span>{item.title}</span>
-                          </div>
-                          <button
-                            type="button"
-                            className="taskCheckItemDeleteButton"
-                            onClick={() => deleteCheckItem(item.id)}
-                            aria-label={`${item.title}を削除`}
-                          >
-                            🗑️
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-
-                  {isAddingCheckItem ? (
-                    <div className="checkItemAddForm">
-                      <input
-                        type="text"
-                        value={newCheckItemTitle}
-                        onChange={(e) => setNewCheckItemTitle(e.target.value)}
-                        placeholder="項目名を入力"
-                        autoFocus
-                      />
+                {!isTaskEditing ? (
+                  <>
+                    {/* 詳細画面 */}
+                    <header className="taskDetailHeader">
+                      <h2 className="taskDetailTitle">{selectedTask.name}</h2>
 
                       <button
                         type="button"
-                        onClick={() => addCheckItem(selectedTask.id)}
+                        className="taskDetailCloseButton"
+                        onClick={closeTaskDetailPanel}
+                        aria-label="詳細を閉じる"
                       >
-                        追加
+                        ×
+                      </button>
+                    </header>
+
+                    {/* 概要 */}
+                    <section className="taskDetailSection">
+                      <h3 className="taskDetailSectionTitle">概要</h3>
+
+                      <p className="taskDetailDescription">
+                        {selectedTask.description || "概要はありません"}
+                      </p>
+                    </section>
+
+                    {/* ステータス・進捗 */}
+                    <section className="taskDetailSection">
+                      <div className="taskDetailStatusRow">
+                        <h3 className="taskDetailSectionTitle">ステータス</h3>
+                        {selectedTask.status}
+                      </div>
+
+                      <div className="taskDetailProgressHeader">
+                        <span>進捗</span>
+                        <span>{selectedTask.progress_percent ?? 0}%</span>
+                      </div>
+
+                      <div className="taskDetailProgressBar">
+                        <div
+                          className="taskDetailProgressValue"
+                          style={{
+                            width: `${selectedTask.progress_percent ?? 0}%`,
+                          }}
+                        />
+                      </div>
+                    </section>
+
+                    {/* チェックリスト */}
+                    <section className="taskDetailSection">
+                      <h3 className="taskDetailSectionTitle">
+                        作業チェックリスト
+                      </h3>
+
+                      {taskCheckItems.length === 0 ? (
+                        <p>チェック項目はありません</p>
+                      ) : (
+                        <ul className="taskCheckItemList">
+                          {taskCheckItems.map((item) => (
+                            <li key={item.id} className="taskCheckItem">
+                              <div className="taskCheckItemContent">
+                                <input
+                                  type="checkbox"
+                                  checked={item.is_done}
+                                  readOnly
+                                />
+
+                                <span>{item.title}</span>
+                              </div>
+
+                              <button
+                                type="button"
+                                className="taskCheckItemDeleteButton"
+                                onClick={() => deleteCheckItem(item.id)}
+                                aria-label={`${item.title}を削除`}
+                              >
+                                🗑️
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+
+                      {isAddingCheckItem ? (
+                        <div className="checkItemAddForm">
+                          <input
+                            type="text"
+                            value={newCheckItemTitle}
+                            onChange={(e) =>
+                              setNewCheckItemTitle(e.target.value)
+                            }
+                            placeholder="項目名を入力"
+                            autoFocus
+                          />
+
+                          <button
+                            type="button"
+                            onClick={() => addCheckItem(selectedTask.id)}
+                          >
+                            追加
+                          </button>
+
+                          {/* 
+                <button
+                  type="button"
+                  onClick={cancelAddCheckItem}
+                >
+                  キャンセル
+                </button>
+                */}
+                        </div>
+                      ) : (
+                        <button type="button" onClick={openAddCheckItemInput}>
+                          ＋ 項目を追加
+                        </button>
+                      )}
+                    </section>
+
+                    {/* タスク情報 */}
+                    <section className="taskDetailSection">
+                      <dl className="taskDetailInfoList">
+                        <div>
+                          <dt>担当者</dt>
+                          <dd>{selectedTask.assignee ?? "—"}</dd>
+                        </div>
+
+                        <div>
+                          <dt>締切日</dt>
+                          <dd>{selectedTask.due_date ?? "—"}</dd>
+                        </div>
+                      </dl>
+                    </section>
+
+                    {/* 操作ボタン */}
+                    <footer className="taskDetailActions">
+
+                         <button
+                        type="button"
+                        onClick={() => startTaskEditing(selectedTask)}
+                      >
+                        タスク編集
+                      </button>
+                    
+                      <button
+                        type="button"
+                        onClick={() => startTaskEditing(selectedTask)}
+                      >
+                        タスク編集
+                      </button>
+                    </footer>
+                  </>
+                ) : (
+                  <form
+                    className="taskDetailEditForm"
+                    onSubmit={handleEditTask}
+                  >
+                    {/* 編集画面 */}
+                    <header className="taskDetailHeader">
+                      <h2 className="taskDetailTitle">タスク編集</h2>
+
+                      <button
+                        type="button"
+                        className="taskDetailCloseButton"
+                        onClick={closeTaskDetailPanel}
+                        aria-label="詳細を閉じる"
+                      >
+                        ×
+                      </button>
+                    </header>
+
+                    {editTaskError && (
+                      <p className="modalError">{editTaskError}</p>
+                    )}
+
+                    {/* タスク名 */}
+                    <div className="taskDetailEditField">
+                      <label htmlFor="editTaskName">タスク名</label>
+
+                      <input
+                        id="editTaskName"
+                        type="text"
+                        value={editTaskName}
+                        onChange={(e) => setEditTaskName(e.target.value)}
+                        autoFocus
+                      />
+                    </div>
+
+                    {editTaskNameError && (
+                      <p className="fieldError">{editTaskNameError}</p>
+                    )}
+
+                    {/* 概要 */}
+                    <div className="taskDetailEditField">
+                      <label htmlFor="editTaskDescription">概要</label>
+
+                      <textarea
+                        id="editTaskDescription"
+                        value={editTaskDescription}
+                        onChange={(e) => setEditTaskDescription(e.target.value)}
+                        placeholder="概要を入力してください"
+                        rows={4}
+                      />
+                    </div>
+
+                    {descriptionError && (
+                      <p className="fieldError">{descriptionError}</p>
+                    )}
+
+                    {/* 締切日 */}
+                    <div className="taskDetailEditField">
+                      <label htmlFor="editTaskDueDate">締切日</label>
+
+                      <input
+                        id="editTaskDueDate"
+                        type="date"
+                        value={editTaskDueDate}
+                        onChange={(e) => setEditTaskDueDate(e.target.value)}
+                      />
+                    </div>
+
+                    {editTaskDueDateError && (
+                      <p className="fieldError">{editTaskDueDateError}</p>
+                    )}
+
+                    {/* 編集操作 */}
+                    <div className="taskDetailActions">
+                      <button type="button" onClick={cancelTaskEditing}>
+                        キャンセル
                       </button>
 
-                      {/* <button type="button" onClick={cancelAddCheckItem}>
-                        キャンセル
-                      </button> */}
+                      <button type="submit">更新</button>
                     </div>
-                  ) : (
-                    <button type="button" onClick={openAddCheckItemInput}>
-                      ＋ 項目を追加
-                    </button>
-                  )}
-                </section>
-
-                {/* タスク情報 */}
-                <section className="taskDetailSection">
-                  <dl className="taskDetailInfoList">
-                    <div>
-                      <dt>担当者</dt>
-                      <dd>{selectedTask.assignee ?? "—"}</dd>
-                    </div>
-
-                    <div>
-                      <dt>締切日</dt>
-                      <dd>{selectedTask.due_date ?? "—"}</dd>
-                    </div>
-                  </dl>
-                </section>
-                {/* 操作ボタン */}
-                <footer className="taskDetailActions">
-                  <button
-                    type="button"
-                    onClick={() => openEditTaskModal(selectedTask)}
-                  >
-                    タスク編集
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => openDeleteTaskModal(selectedTask)}
-                  >
-                    タスク削除
-                  </button>
-                </footer>
+                  </form>
+                )}
               </aside>
             </>
-          )}
-
-          {isEditTaskModalOpen && (
-            <div className="modalOverlay" onClick={closeEditTaskModal}>
-              <div className="modal" onClick={(e) => e.stopPropagation()}>
-                <h2 className="modalTitle">タスク編集</h2>
-
-                <form onSubmit={handleEditTask}>
-                  {editTaskError && (
-                    <p className="modalError">{editTaskError}</p>
-                  )}
-
-                  <div className="modalField">
-                    <label htmlFor="editTaskName">タスク名</label>
-                    <input
-                      id="editTaskName"
-                      type="text"
-                      value={editTaskName}
-                      onChange={(e) => setEditTaskName(e.target.value)}
-                    />
-                  </div>
-                  {editTaskNameError && (
-                    <p className="fieldError">{editTaskNameError}</p>
-                  )}
-
-                  <div className="modalField">
-                    <label htmlFor="editTaskDueDate">締切日</label>
-                    <input
-                      id="editTaskDueDate"
-                      type="date"
-                      value={editTaskDueDate}
-                      onChange={(e) => setEditTaskDueDate(e.target.value)}
-                    />
-                  </div>
-                  {editTaskDueDateError && (
-                    <p className="fieldError">{editTaskDueDateError}</p>
-                  )}
-
-                  <div className="modalActions">
-                    <button type="button" onClick={closeEditTaskModal}>
-                      キャンセル
-                    </button>
-                    <button type="submit">更新</button>
-                  </div>
-                </form>
-              </div>
-            </div>
           )}
         </div>
 

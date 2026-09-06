@@ -468,6 +468,75 @@
   cursor: pointer;
 }
 
+.taskDetailEditForm {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.taskDetailEditField {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.taskDetailEditField label {
+  color: #475569;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.taskDetailEditField input,
+.taskDetailEditField textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #d6dce8;
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: #0f172a;
+  font: inherit;
+  line-height: 1.5;
+  background-color: #fff;
+}
+
+.taskDetailEditField textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.taskDetailEditField input:focus,
+.taskDetailEditField textarea:focus {
+  border-color: #2563eb;
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 15%);
+}
+
+.taskDetailActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.taskDetailActions button {
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.taskDetailActions button:first-child {
+  color: #334155;
+  background-color: #e2e8f0;
+}
+
+.taskDetailActions button:last-child {
+  color: #fff;
+  background-color: #2563eb;
+}
+
 .taskCheckItemList {
   padding: 0;
   margin: 0;
