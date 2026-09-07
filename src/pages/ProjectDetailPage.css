@@ -325,6 +325,7 @@
   cursor: pointer;
 }
 
+/* タスク一覧テーブル */
 .taskTableContainer {
   width: 100%;
   overflow-x: auto;
@@ -347,8 +348,8 @@
 .taskTable th {
   white-space: nowrap;
 }
-/* 合計100% */
 
+/* 合計100% */
 .colTaskName {
   width: 25%;
 }
@@ -373,6 +374,12 @@
   width: 12%;
 }
 
+.taskCreatedCell,
+.taskDueCell {
+  white-space: nowrap;
+}
+
+/* タスクステータス */
 .taskStatusSelect {
   width: 128px;
   max-width: 100%;
@@ -390,11 +397,6 @@
   border-color: #2563eb;
   outline: none;
   box-shadow: 0 0 0 3px rgb(37 99 235 / 15%);
-}
-
-.taskCreatedCell,
-.taskDueCell {
-  white-space: nowrap;
 }
 
 .taskStatusSelect:focus {
@@ -425,6 +427,14 @@
   background-color: #dcfce7;
 }
 
+/* タスク詳細パネル */
+.taskDetailOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.3);
+  z-index: 1000;
+}
+
 .taskDetailPanel {
   position: fixed;
   top: 0;
@@ -438,12 +448,7 @@
   z-index: 1001;
   box-shadow: -8px 0 24px rgba(15, 23, 42, 0.12);
 }
-.taskDetailOverlay {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(15, 23, 42, 0.3);
-  z-index: 1000;
-}
+
 .taskDetailHeader {
   display: flex;
   align-items: flex-start;
@@ -468,6 +473,49 @@
   cursor: pointer;
 }
 
+/* チェックリスト */
+.taskCheckItemList {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.taskCheckItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 40px;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+
+.taskCheckItem:hover {
+  background-color: #f8fafc;
+}
+
+.taskCheckItemContent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.taskCheckItemDeleteButton {
+  opacity: 0;
+  visibility: hidden;
+  padding: 4px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.taskCheckItem:hover .taskCheckItemDeleteButton,
+.taskCheckItem:focus-within .taskCheckItemDeleteButton {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* タスク編集フォーム */
 .taskDetailEditForm {
   display: flex;
   flex-direction: column;
@@ -511,6 +559,7 @@
   box-shadow: 0 0 0 3px rgb(37 99 235 / 15%);
 }
 
+/* タスク詳細操作 */
 .taskDetailActions {
   display: flex;
   gap: 12px;
@@ -550,45 +599,4 @@
 
 .taskDetailActions .taskDeleteButton:hover {
   background-color: #fef2f2;
-}
-
-.taskCheckItemList {
-  padding: 0;
-  margin: 0;
-  list-style: none;
-}
-
-.taskCheckItem {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  min-height: 40px;
-  padding: 6px 8px;
-  border-radius: 6px;
-}
-
-.taskCheckItem:hover {
-  background-color: #f8fafc;
-}
-
-.taskCheckItemContent {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.taskCheckItemDeleteButton {
-  opacity: 0;
-  visibility: hidden;
-  padding: 4px;
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-}
-
-.taskCheckItem:hover .taskCheckItemDeleteButton,
-.taskCheckItem:focus-within .taskCheckItemDeleteButton {
-  opacity: 1;
-  visibility: visible;
 }

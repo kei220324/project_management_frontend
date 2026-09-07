@@ -3,44 +3,55 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import "./ProjectDetailPage.css";
 
 export default function ProjectDetailPage() {
+  // ルーティング・API設定
   const { projectId } = useParams();
   const navigate = useNavigate();
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+  // プロジェクト取得状態
   const [project, setProject] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // プロジェクト削除モーダル状態
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
+
+  // タスク追加フォーム状態
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
   const [addTaskError, setAddTaskError] = useState(null);
   const [taskNameError, setTaskNameError] = useState(null);
   const [taskDueDateError, setTaskDueDateError] = useState(null);
+  const [taskName, setTaskName] = useState("");
+  const [taskDueDate, setTaskDueDate] = useState("");
+  const [description, setDescription] = useState("");
+
+  // タスク詳細・編集状態
   const [editTaskError, setEditTaskError] = useState(null);
   const [editTaskNameError, setEditTaskNameError] = useState(null);
   const [editTaskDueDateError, setEditTaskDueDateError] = useState(null);
-
   const [isTaskEditing, setIsTaskEditing] = useState(false);
   const [editTaskName, setEditTaskName] = useState("");
   const [editTaskDueDate, setEditTaskDueDate] = useState("");
   const [selectedTask, setSelectedTask] = useState(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState(null);
-  const [taskName, setTaskName] = useState("");
   const [editTaskDescription, setEditTaskDescription] = useState("");
-  const [taskDueDate, setTaskDueDate] = useState("");
-  const [taskCheckItems, setTaskCheckItems] = useState([]);
-  const [description, setDescription] = useState("");
   const [descriptionError, setDescriptionError] = useState(null);
 
+  // チェックリスト状態
+  const [taskCheckItems, setTaskCheckItems] = useState([]);
   const [isAddingCheckItem, setIsAddingCheckItem] = useState(false);
   const [newCheckItemTitle, setNewCheckItemTitle] = useState("");
+
+  // タスク削除モーダル状態
   const [isTaskDeleteModalOpen, setIsTaskDeleteModalOpen] = useState(false);
   const [isDeletingTask, setIsDeletingTask] = useState(false);
   const [deleteTaskError, setDeleteTaskError] = useState(null);
 
   const projectDetailApiUrl = `${API_BASE_URL}/projects/${projectId}`;
 
+  // プロジェクト取得
   const fetchProject = async ({ showLoading = false } = {}) => {
     if (showLoading) {
       setLoading(true);
@@ -74,6 +85,7 @@ export default function ProjectDetailPage() {
     fetchProject({ showLoading: true });
   }, [projectDetailApiUrl]);
 
+  // プロジェクト削除
   const openDeleteModal = () => {
     setDeleteError(null);
     setIsDeleteModalOpen(true);
@@ -82,19 +94,6 @@ export default function ProjectDetailPage() {
   const closeDeleteModal = () => {
     setIsDeleteModalOpen(false);
     setDeleteError(null);
-  };
-
-  const openAddTaskModal = () => {
-    setIsAddTaskModalOpen(true);
-  };
-
-  const closeAddTaskModal = () => {
-    setIsAddTaskModalOpen(false);
-    setTaskName("");
-    setTaskDueDate("");
-    setAddTaskError(null);
-    setTaskNameError(null);
-    setTaskDueDateError(null);
   };
 
   const handleDelete = async () => {
@@ -123,32 +122,19 @@ export default function ProjectDetailPage() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="page">
-        <p>読み込み中...</p>
-      </div>
-    );
-  }
+  // タスク追加
+  const openAddTaskModal = () => {
+    setIsAddTaskModalOpen(true);
+  };
 
-  if (error || !project) {
-    return (
-      <div className="page">
-        <div className="card detailCard">
-          <div className="projectInfoHeader">
-            <div className="projectInfoContent">
-              <p>{error ?? "プロジェクトが見つかりませんでした。"}</p>
-              <Link to="/projects" className="backLink">
-                プロジェクト一覧に戻る
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const progressPercent = project.progress_percent ?? 0;
+  const closeAddTaskModal = () => {
+    setIsAddTaskModalOpen(false);
+    setTaskName("");
+    setTaskDueDate("");
+    setAddTaskError(null);
+    setTaskNameError(null);
+    setTaskDueDateError(null);
+  };
 
   const handleAddTask = async (e) => {
     e.preventDefault();
@@ -214,6 +200,7 @@ export default function ProjectDetailPage() {
   //   }
   // };
 
+  // タスク詳細パネル・編集
   const startTaskEditing = (task) => {
     setEditTaskName(task.name ?? "");
 
@@ -330,6 +317,7 @@ export default function ProjectDetailPage() {
     cancelTaskEditing();
   };
 
+  // チェックリスト
   const fetchTaskCheckItems = async (taskId) => {
     try {
       const res = await fetch(`${API_BASE_URL}/tasks/${taskId}/check-items`);
@@ -398,10 +386,40 @@ export default function ProjectDetailPage() {
     }
   };
 
+  // タスク削除モーダル
   const openTaskDeleteModal = () => {
     setIsTaskDeleteModalOpen(true);
     console.log("openTaskDeleteModal called");
   };
+
+  // ローディング・エラー表示
+  if (loading) {
+    return (
+      <div className="page">
+        <p>読み込み中...</p>
+      </div>
+    );
+  }
+
+  if (error || !project) {
+    return (
+      <div className="page">
+        <div className="card detailCard">
+          <div className="projectInfoHeader">
+            <div className="projectInfoContent">
+              <p>{error ?? "プロジェクトが見つかりませんでした。"}</p>
+              <Link to="/projects" className="backLink">
+                プロジェクト一覧に戻る
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 表示用の算出値
+  const progressPercent = project.progress_percent ?? 0;
 
   return (
     <div className="page">
