@@ -513,28 +513,43 @@
 
 .taskDetailActions {
   display: flex;
-  justify-content: flex-end;
   gap: 12px;
-  margin-top: 8px;
+  margin-top: 24px;
 }
 
 .taskDetailActions button {
-  border: none;
+  flex: 1;
   border-radius: 8px;
-  padding: 10px 16px;
+  padding: 12px 16px;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
 }
 
-.taskDetailActions button:first-child {
-  color: #334155;
-  background-color: #e2e8f0;
-}
-
-.taskDetailActions button:last-child {
-  color: #fff;
+/* タスク編集 */
+.taskDetailActions .taskEditButton {
+  border: 1px solid #2563eb;
   background-color: #2563eb;
+  color: #ffffff;
+}
+
+.taskDetailActions .taskEditButton:hover {
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+/* タスク削除 */
+.taskDetailActions .taskDeleteButton {
+  border: 1px solid #ef4444;
+  background-color: #ffffff;
+  color: #ef4444;
+}
+
+.taskDetailActions .taskDeleteButton:hover {
+  background-color: #fef2f2;
 }
 
 .taskCheckItemList {

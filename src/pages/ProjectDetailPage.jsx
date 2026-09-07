@@ -35,6 +35,9 @@ export default function ProjectDetailPage() {
 
   const [isAddingCheckItem, setIsAddingCheckItem] = useState(false);
   const [newCheckItemTitle, setNewCheckItemTitle] = useState("");
+  const [isTaskDeleteModalOpen, setIsTaskDeleteModalOpen] = useState(false);
+  const [isDeletingTask, setIsDeletingTask] = useState(false);
+  const [deleteTaskError, setDeleteTaskError] = useState(null);
 
   const projectDetailApiUrl = `${API_BASE_URL}/projects/${projectId}`;
 
@@ -212,9 +215,8 @@ export default function ProjectDetailPage() {
   // };
 
   const startTaskEditing = (task) => {
-   
     setEditTaskName(task.name ?? "");
-    
+
     setEditTaskDescription(task.description ?? "");
     setEditTaskDueDate(task.due_date ?? "");
     // setEditTaskError(null);
@@ -396,6 +398,11 @@ export default function ProjectDetailPage() {
     }
   };
 
+  const openTaskDeleteModal = () => {
+    setIsTaskDeleteModalOpen(true);
+    console.log("openTaskDeleteModal called");
+  };
+
   return (
     <div className="page">
       <div className="pageContainer">
@@ -451,6 +458,31 @@ export default function ProjectDetailPage() {
             </div>
           </div>
         </div>
+
+        {isDeleteModalOpen && (
+          <div className="modalOverlay">
+            <div className="modal">
+              <p>本当に削除しますか？</p>
+              {deleteError && <p className="modalError">{deleteError}</p>}
+              <div className="modalActions">
+                <button
+                  type="button"
+                  onClick={closeDeleteModal}
+                  disabled={isDeleting}
+                >
+                  キャンセル
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? "削除中..." : "OK"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="taskHeader">
           <h2 className="taskTitle">タスク一覧</h2>
@@ -712,19 +744,20 @@ export default function ProjectDetailPage() {
 
                     {/* 操作ボタン */}
                     <footer className="taskDetailActions">
-
-                         <button
+                      <button
                         type="button"
+                        className="taskEditButton"
                         onClick={() => startTaskEditing(selectedTask)}
                       >
                         タスク編集
                       </button>
-                    
+
                       <button
                         type="button"
-                        onClick={() => startTaskEditing(selectedTask)}
+                        className="taskDeleteButton"
+                        onClick={() => openTaskDeleteModal(selectedTask)}
                       >
-                        タスク編集
+                        タスク削除
                       </button>
                     </footer>
                   </>
@@ -812,34 +845,33 @@ export default function ProjectDetailPage() {
                   </form>
                 )}
               </aside>
+              {isTaskDeleteModalOpen && (
+                <div className="modalOverlay">
+                  <div
+                    className="modal"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="taskDeleteModalTitle"
+                  >
+                    <h2 id="taskDeleteModalTitle">タスクを削除しますか？</h2>
+
+                    <p>「{selectedTask.name}」を削除します。</p>
+
+                    <p>
+                      このタスクに登録されているチェック項目も削除されます。
+                      この操作は取り消せません。
+                    </p>
+
+                    <div className="modalActions">
+                      <button type="button">キャンセル</button>
+                      <button type="button">削除する</button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </>
           )}
         </div>
-
-        {isDeleteModalOpen && (
-          <div className="modalOverlay">
-            <div className="modal">
-              <p>本当に削除しますか？</p>
-              {deleteError && <p className="modalError">{deleteError}</p>}
-              <div className="modalActions">
-                <button
-                  type="button"
-                  onClick={closeDeleteModal}
-                  disabled={isDeleting}
-                >
-                  キャンセル
-                </button>
-                <button
-                  type="button"
-                  onClick={handleDelete}
-                  disabled={isDeleting}
-                >
-                  {isDeleting ? "削除中..." : "OK"}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
