@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import "./ProjectDetailPage.css";
 
@@ -314,6 +315,8 @@ export default function ProjectDetailPage() {
 
   const closeTaskDetailPanel = () => {
     setSelectedTask(null);
+    setIsTaskDeleteModalOpen(false);
+    setDeleteTaskError(null);
     cancelTaskEditing();
   };
 
@@ -387,9 +390,38 @@ export default function ProjectDetailPage() {
   };
 
   // タスク削除モーダル
-  const openTaskDeleteModal = () => {
+  const openTaskDeleteModal = (task) => {
+    setSelectedTask(task);
+    setDeleteTaskError(null);
     setIsTaskDeleteModalOpen(true);
-    console.log("openTaskDeleteModal called");
+  };
+
+  const closeTaskDeleteModal = () => {
+    setIsTaskDeleteModalOpen(false);
+    setDeleteTaskError(null);
+  };
+
+  const handleDeleteTask = async () => {
+    if (isDeletingTask) return;
+    setIsDeletingTask(true);
+    setDeleteTaskError(null);
+    try {
+      const res = await fetch(`${API_BASE_URL}/tasks/${selectedTask.id}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        throw new Error("タスクの削除に失敗しました");
+      }
+
+      await fetchProject();
+      closeTaskDeleteModal();
+      setSelectedTask(null);
+    } catch (e) {
+      setDeleteTaskError(e.message);
+    } finally {
+      setIsDeletingTask(false);
+    }
   };
 
   // ローディング・エラー表示
@@ -863,30 +895,52 @@ export default function ProjectDetailPage() {
                   </form>
                 )}
               </aside>
-              {isTaskDeleteModalOpen && (
-                <div className="modalOverlay">
+              {isTaskDeleteModalOpen &&
+                selectedTask &&
+                createPortal(
                   <div
-                    className="modal"
-                    role="dialog"
-                    aria-modal="true"
-                    aria-labelledby="taskDeleteModalTitle"
+                    className="modalOverlay taskDeleteModalOverlay"
+                    onClick={closeTaskDeleteModal}
                   >
-                    <h2 id="taskDeleteModalTitle">タスクを削除しますか？</h2>
+                    <div
+                      className="modal taskDeleteModal"
+                      role="dialog"
+                      aria-modal="true"
+                      aria-labelledby="taskDeleteModalTitle"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div className="taskDeleteModalIcon" aria-hidden="true">
+                        !
+                      </div>
 
-                    <p>「{selectedTask.name}」を削除します。</p>
+                      <div className="taskDeleteModalContent">
+                        <p className="taskDeleteModalLabel">削除の確認</p>
+                        <h2 id="taskDeleteModalTitle">
+                          「{selectedTask.name}」を削除しますか？
+                        </h2>
 
-                    <p>
-                      このタスクに登録されているチェック項目も削除されます。
-                      この操作は取り消せません。
-                    </p>
+                        <p>
+                          このタスクに登録されているチェック項目も削除されます。
+                          この操作は取り消せません。
+                        </p>
 
-                    <div className="modalActions">
-                      <button type="button">キャンセル</button>
-                      <button type="button">削除する</button>
+                        {deleteTaskError && (
+                          <p className="modalError">{deleteTaskError}</p>
+                        )}
+                      </div>
+
+                      <div className="modalActions taskDeleteModalActions">
+                        <button type="button" onClick={closeTaskDeleteModal}>
+                          キャンセル
+                        </button>
+                        <button type="button" onClick={handleDeleteTask}>
+                          削除する
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              )}
+                  </div>,
+                  document.body,
+                )}
             </>
           )}
         </div>

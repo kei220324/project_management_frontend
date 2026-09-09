@@ -325,6 +325,84 @@
   cursor: pointer;
 }
 
+.taskDeleteModalOverlay {
+  z-index: 2000;
+  padding: 24px;
+  box-sizing: border-box;
+  background: rgba(15, 23, 42, 0.52);
+}
+
+.taskDeleteModal {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 16px;
+  width: min(440px, 100%);
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.taskDeleteModalIcon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  color: #dc2626;
+  background: #fee2e2;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.taskDeleteModalContent {
+  min-width: 0;
+}
+
+.taskDeleteModalLabel {
+  margin: 0 0 6px;
+  color: #dc2626;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.taskDeleteModal h2 {
+  margin: 0 0 10px;
+  color: #0f172a;
+  font-size: 22px;
+  line-height: 1.35;
+}
+
+.taskDeleteModal p {
+  color: #475569;
+  line-height: 1.65;
+}
+
+.taskDeleteModalActions {
+  grid-column: 1 / -1;
+  margin-top: 8px;
+}
+
+.taskDeleteModalActions button:first-child {
+  color: #334155;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+}
+
+.taskDeleteModalActions button:last-child {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.taskDeleteModalActions button:last-child:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+.taskDeleteModalActions button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
 /* タスク一覧テーブル */
 .taskTableContainer {
   width: 100%;
