@@ -26,8 +26,8 @@ export default function ProjectDetailPage() {
   const [taskNameError, setTaskNameError] = useState(null);
   const [taskDueDateError, setTaskDueDateError] = useState(null);
   const [taskName, setTaskName] = useState("");
-  const [taskDueDate, setTaskDueDate] = useState("");
   const [description, setDescription] = useState("");
+  const [taskDueDate, setTaskDueDate] = useState("");
 
   // タスク詳細・編集状態
   const [editTaskError, setEditTaskError] = useState(null);
@@ -142,6 +142,7 @@ export default function ProjectDetailPage() {
 
     setAddTaskError(null);
     setTaskNameError(null);
+    setDescription(null)
     setTaskDueDateError(null);
 
     let hasError = false;
@@ -150,7 +151,11 @@ export default function ProjectDetailPage() {
       setTaskNameError("タスク名を入力してください");
       hasError = true;
     }
-
+  
+    if (!description.trim()) {
+      setDescriptionError("概要を入力してください");
+      hasError = true;
+    }
     if (!taskDueDate) {
       setTaskDueDateError("締切日を入力してください");
       hasError = true;
@@ -567,9 +572,9 @@ export default function ProjectDetailPage() {
                 <div className="formGroup">
                   <label htmlFor="editTaskDescription">概要（任意）</label>
                   <textarea
-                    id="TaskDescription"
-                    value={editTaskDescription}
-                    onChange={(e) => setEditTaskDescription(e.target.value)}
+                    id="taskDescription"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
                     placeholder="タスクの内容や完了条件を入力"
                     rows={4}
                   />
