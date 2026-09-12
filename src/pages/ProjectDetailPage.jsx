@@ -71,6 +71,7 @@ export default function ProjectDetailPage() {
 
       setProject(data);
       setTasks(data.tasks ?? []);
+
       return data;
     } catch (e) {
       setError(e.message);
@@ -142,7 +143,7 @@ export default function ProjectDetailPage() {
 
     setAddTaskError(null);
     setTaskNameError(null);
-    setDescription(null)
+    setDescription(null);
     setTaskDueDateError(null);
 
     let hasError = false;
@@ -151,7 +152,7 @@ export default function ProjectDetailPage() {
       setTaskNameError("タスク名を入力してください");
       hasError = true;
     }
-  
+
     if (!description.trim()) {
       setDescriptionError("概要を入力してください");
       hasError = true;
@@ -309,7 +310,6 @@ export default function ProjectDetailPage() {
   };
 
   const openTaskDetailPanel = (task) => {
-    console.log(task);
     setSelectedTask(task);
     setIsTaskEditing(false);
     setEditTaskError(null);
@@ -333,9 +333,38 @@ export default function ProjectDetailPage() {
         throw new Error("チェック項目の取得に失敗しました");
       }
       const data = await res.json();
+
       setTaskCheckItems(data);
     } catch (e) {
       console.error("チェック項目の取得に失敗しました", e);
+    }
+  };
+  const toggleCheckItem = async (item) => {
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/tasks/${selectedTask.id}/check-items/${item.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            is_done: !item.is_done,
+          }),
+        },
+      );
+
+      if (!res.ok) {
+        throw new Error("チェック項目の更新に失敗しました");
+      }
+
+      // チェックリストを最新状態にする
+      await fetchTaskCheckItems(selectedTask.id);
+
+      // プロジェクトのタスク一覧を最新状態にする
+      await fetchProject(selectedTask.project_id);
+    } catch (e) {
+      console.error("チェック項目の更新に失敗しました", e);
     }
   };
 
@@ -363,6 +392,8 @@ export default function ProjectDetailPage() {
 
       // 最新のチェックリストを再取得する
       await fetchTaskCheckItems(taskId);
+      // プロジェクトのタスク一覧を最新状態にする
+      await fetchProject(selectedTask.project_id);
 
       // 入力欄を空にする
       setNewCheckItemTitle("");
@@ -389,6 +420,8 @@ export default function ProjectDetailPage() {
 
       // 削除後の最新チェックリストを取得
       await fetchTaskCheckItems(selectedTask.id);
+      // プロジェクトのタスク一覧を最新状態にする
+      await fetchProject(selectedTask.project_id);
     } catch (e) {
       console.error("チェック項目の削除に失敗しました", e);
     }
@@ -573,7 +606,7 @@ export default function ProjectDetailPage() {
                   <label htmlFor="editTaskDescription">概要（任意）</label>
                   <textarea
                     id="taskDescription"
-                    value={description}
+                    value={description ?? ""}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="タスクの内容や完了条件を入力"
                     rows={4}
@@ -637,7 +670,9 @@ export default function ProjectDetailPage() {
                       </select>
                     </td>
 
-                    <td className="taskProgressCell">—</td>
+                    <td className="taskProgressCell">
+                      {task.progress_percent ?? 0}%
+                    </td>
 
                     <td className="taskDueCell">{task.due_date ?? "—"}</td>
 
@@ -728,7 +763,7 @@ export default function ProjectDetailPage() {
                                 <input
                                   type="checkbox"
                                   checked={item.is_done}
-                                  readOnly
+                                  onChange={() => toggleCheckItem(item)}
                                 />
 
                                 <span>{item.title}</span>
