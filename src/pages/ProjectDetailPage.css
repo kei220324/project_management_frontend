@@ -428,6 +428,8 @@
 }
 
 /* 合計100% */
+/* 合計100% */
+
 .colTaskName {
   width: 25%;
 }
@@ -437,15 +439,15 @@
 }
 
 .colTaskProgress {
-  width: 11%;
+  width: 10%;
 }
 
 .colTaskDue {
-  width: 17%;
+  width: 20%;
 }
 
 .colTaskAssignee {
-  width: 18%;
+  width: 16%;
 }
 
 .colTaskAction {
@@ -454,7 +456,7 @@
 
 .taskCreatedCell,
 .taskDueCell {
-  white-space: nowrap;
+   white-space: normal;
 }
 
 /* タスクステータス */
@@ -503,6 +505,21 @@
 .taskStatusSelect.status-completed {
   color: #10b981;
   background-color: #dcfce7;
+}
+
+.deadlineOverdue {
+  color: red;
+  font-weight: bold;
+}
+
+.deadlineToday {
+  color: orange;
+  font-weight: bold;
+}
+
+.deadlineSoon {
+  color: #d97706;
+  font-weight: bold;
 }
 
 /* タスク詳細パネル */

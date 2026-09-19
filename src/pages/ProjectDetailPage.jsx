@@ -52,6 +52,26 @@ export default function ProjectDetailPage() {
 
   const projectDetailApiUrl = `${API_BASE_URL}/projects/${projectId}`;
 
+  const getDeadlineStatus = (dueDate) => {
+    if (!dueDate) return null;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const due = new Date(dueDate);
+    due.setHours(0, 0, 0, 0);
+
+    const diffDays = Math.ceil(
+      (due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
+    );
+
+    if (diffDays < 0) return "overdue";
+    if (diffDays === 0) return "today";
+    if (diffDays <= 3) return "soon";
+
+    return null;
+  };
+
   // プロジェクト取得
   const fetchProject = async ({ showLoading = false } = {}) => {
     if (showLoading) {
@@ -674,7 +694,41 @@ export default function ProjectDetailPage() {
                       {task.progress_percent ?? 0}%
                     </td>
 
-                    <td className="taskDueCell">{task.due_date ?? "—"}</td>
+                    <td className="taskDueCell">
+                      {task.due_date
+                        ? (() => {
+                            const deadlineStatus = getDeadlineStatus(
+                              task.due_date,
+                            );
+
+                            if (deadlineStatus === "overdue") {
+                              return (
+                                <span className="deadlineOverdue">
+                                  {task.due_date}（期限切れ）
+                                </span>
+                              );
+                            }
+
+                            if (deadlineStatus === "today") {
+                              return (
+                                <span className="deadlineToday">
+                                  {task.due_date}（本日締切）
+                                </span>
+                              );
+                            }
+
+                            if (deadlineStatus === "soon") {
+                              return (
+                                <span className="deadlineSoon">
+                                  {task.due_date}（期限間近）
+                                </span>
+                              );
+                            }
+
+                            return task.due_date;
+                          })()
+                        : "—"}
+                    </td>
 
                     <td className="taskAssigneeCell">—</td>
 
@@ -827,7 +881,41 @@ export default function ProjectDetailPage() {
 
                         <div>
                           <dt>締切日</dt>
-                          <dd>{selectedTask.due_date ?? "—"}</dd>
+                          <dd>
+                            {selectedTask.due_date
+                              ? (() => {
+                                  const deadlineStatus = getDeadlineStatus(
+                                    selectedTask.due_date,
+                                  );
+
+                                  if (deadlineStatus === "overdue") {
+                                    return (
+                                      <span className="deadlineOverdue">
+                                        {selectedTask.due_date}（期限切れ）
+                                      </span>
+                                    );
+                                  }
+
+                                  if (deadlineStatus === "today") {
+                                    return (
+                                      <span className="deadlineToday">
+                                        {selectedTask.due_date}（本日締切）
+                                      </span>
+                                    );
+                                  }
+
+                                  if (deadlineStatus === "soon") {
+                                    return (
+                                      <span className="deadlineSoon">
+                                        {selectedTask.due_date}（期限間近）
+                                      </span>
+                                    );
+                                  }
+
+                                  return selectedTask.due_date;
+                                })()
+                              : "—"}
+                          </dd>
                         </div>
                       </dl>
                     </section>
