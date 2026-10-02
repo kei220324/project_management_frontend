@@ -24,11 +24,23 @@ export default function ProjectListPage() {
     setError(null);
 
     try {
-      const res = await fetch(projectsApiUrl);
+      const res = await fetch(projectsApiUrl, {
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+
+      if (res.status === 401) {
+        navigate("/login");
+        return;
+      }
 
       if (!res.ok) {
         throw new Error("データ取得に失敗しました");
       }
+
 
       const data = await res.json();
 

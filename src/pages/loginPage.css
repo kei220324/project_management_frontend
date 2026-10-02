@@ -1,0 +1,161 @@
+
+.loginPage {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  box-sizing: border-box;
+  background: #f8fafc;
+}
+
+.loginCard {
+  width: 100%;
+  max-width: 420px;
+  padding: 48px 44px;
+  box-sizing: border-box;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+/* タイトル */
+.loginTitle {
+  margin: 0;
+  color: #111827;
+  text-align: center;
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* サブタイトル */
+.loginSubtitle {
+  margin: 10px 0 36px;
+  color: #6b7280;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* フォーム */
+.loginCard form > div {
+  margin-bottom: 22px;
+}
+
+/* ラベル */
+.loginCard label {
+  display: block;
+  margin-bottom: 8px;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* 入力欄 */
+.loginCard input {
+  width: 100%;
+  height: 48px;
+  padding: 0 14px;
+  box-sizing: border-box;
+
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #111827;
+
+  font-size: 15px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.loginCard input::placeholder {
+  color: #9ca3af;
+}
+
+.loginCard input:hover {
+  border-color: #9ca3af;
+}
+
+.loginCard input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+}
+
+/* エラー */
+.loginCard form > p {
+  margin: -4px 0 18px;
+  color: #dc2626;
+  font-size: 13px;
+}
+
+/* ボタン共通 */
+.loginButton,
+.registerButton {
+  width: 100%;
+  height: 48px;
+  border-radius: 8px;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.1s ease;
+}
+
+.loginButton:active,
+.registerButton:active {
+  transform: translateY(1px);
+}
+
+/* ログインボタン */
+.loginButton {
+  border: 1px solid #4f46e5;
+  background: #4f46e5;
+  color: #ffffff;
+}
+
+.loginButton:hover {
+  background: #4338ca;
+  border-color: #4338ca;
+}
+
+/* ユーザー登録 */
+.registerButton {
+  margin-top: 12px;
+
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #374151;
+}
+
+.registerButton:hover {
+  border-color: #9ca3af;
+  background: #f9fafb;
+}
+
+/* スマホ */
+@media (max-width: 480px) {
+  .loginPage {
+    padding: 16px;
+  }
+
+  .loginCard {
+    padding: 36px 24px;
+    border-radius: 12px;
+  }
+
+  .loginTitle {
+    font-size: 22px;
+  }
+}
+

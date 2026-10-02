@@ -4,8 +4,8 @@ import "./HomePage.css";
 export default function HomePage() {
   const navigate = useNavigate();
 
-  const handleGoToProjects = () => {
-    navigate("/projects");
+  const handleGoToLogin = () => {
+    navigate("/login");
   };
 
   return (
@@ -20,9 +20,9 @@ export default function HomePage() {
         <button
           type="button"
           className="homeButton"
-          onClick={handleGoToProjects}
+          onClick={handleGoToLogin}
         >
-          アプリを見る
+          ログイン
         </button>
       </div>
     </div>

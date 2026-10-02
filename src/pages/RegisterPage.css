@@ -1,0 +1,196 @@
+
+.registerPage {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  box-sizing: border-box;
+
+  background: #f8fafc;
+}
+
+.registerCard {
+  width: 100%;
+  max-width: 440px;
+  padding: 44px;
+  box-sizing: border-box;
+
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+/* タイトル */
+.registerTitle {
+  margin: 0;
+
+  color: #111827;
+  text-align: center;
+
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* サブタイトル */
+.registerSubtitle {
+  margin: 10px 0 32px;
+
+  color: #6b7280;
+  text-align: center;
+
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* フォーム */
+.registerFormGroup {
+  margin-bottom: 20px;
+}
+
+/* ラベル */
+.registerFormGroup label {
+  display: block;
+  margin-bottom: 8px;
+
+  color: #374151;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* 入力欄 */
+.registerFormGroup input {
+  width: 100%;
+  height: 48px;
+
+  padding: 0 14px;
+  box-sizing: border-box;
+
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #111827;
+
+  font-size: 15px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.registerFormGroup input::placeholder {
+  color: #9ca3af;
+}
+
+.registerFormGroup input:hover {
+  border-color: #9ca3af;
+}
+
+.registerFormGroup input:focus {
+  outline: none;
+
+  border-color: #4f46e5;
+
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+}
+
+/* エラー */
+.registerError {
+  margin: 4px 0 18px;
+
+  color: #dc2626;
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* 登録ボタン */
+.registerSubmitButton {
+  width: 100%;
+  height: 48px;
+
+  border: 1px solid #4f46e5;
+  border-radius: 8px;
+
+  background: #4f46e5;
+  color: #ffffff;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.1s ease;
+}
+
+.registerSubmitButton:hover {
+  background: #4338ca;
+  border-color: #4338ca;
+}
+
+.registerSubmitButton:active {
+  transform: translateY(1px);
+}
+
+/* ログインへの導線 */
+.registerLoginLink {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+
+  margin-top: 24px;
+
+  color: #6b7280;
+
+  font-size: 13px;
+}
+
+.registerLoginLink button {
+  padding: 0;
+
+  border: none;
+  background: none;
+
+  color: #4f46e5;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.registerLoginLink button:hover {
+  color: #4338ca;
+  text-decoration: underline;
+}
+
+/* スマホ */
+@media (max-width: 480px) {
+  .registerPage {
+    padding: 16px;
+  }
+
+  .registerCard {
+    padding: 36px 24px;
+    border-radius: 12px;
+  }
+
+  .registerTitle {
+    font-size: 23px;
+  }
+
+  .registerLoginLink {
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
