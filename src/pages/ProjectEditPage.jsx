@@ -25,6 +25,7 @@ export default function ProjectEditPage() {
 
     try {
       const res = await fetch(projectApiUrl, {
+        credentials: "include",
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -50,10 +51,16 @@ export default function ProjectEditPage() {
   };
   useEffect(() => {
     const fetchProject = async () => {
+    
       setLoading(true);
       setFetchError(null);
       try {
-        const res = await fetch(projectApiUrl);
+        const res = await fetch(projectApiUrl, {
+          credentials: "include",
+          headers: {
+            Accept: "application/json",
+          },
+        });
 
         if (!res.ok) {
           throw new Error("プロジェクトの取得に失敗しました");

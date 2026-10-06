@@ -30,6 +30,7 @@ export default function ProjectCreatePage() {
     try {
       const res = await fetch(`${API_BASE_URL}/projects`, {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },

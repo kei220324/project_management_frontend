@@ -50,6 +50,8 @@ export default function ProjectDetailPage() {
   const [isDeletingTask, setIsDeletingTask] = useState(false);
   const [deleteTaskError, setDeleteTaskError] = useState(null);
 
+  const [taskAssigneeId, setTaskAssigneeId] = useState("");
+
   const projectDetailApiUrl = `${API_BASE_URL}/projects/${projectId}`;
 
   const getDeadlineStatus = (dueDate) => {
@@ -81,7 +83,17 @@ export default function ProjectDetailPage() {
     try {
       setError(null);
 
-      const res = await fetch(projectDetailApiUrl);
+      const res = await fetch(projectDetailApiUrl, {
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      if (res.status === 401) {
+        navigate("/login");
+        return;
+      }
 
       if (!res.ok) {
         throw new Error("プロジェクトの取得に失敗しました");
@@ -90,6 +102,9 @@ export default function ProjectDetailPage() {
       const data = await res.json();
 
       setProject(data);
+      console.log("取得したproject:", data);
+      console.log("project.users:", data.users);
+
       setTasks(data.tasks ?? []);
 
       return data;
@@ -126,6 +141,8 @@ export default function ProjectDetailPage() {
 
     try {
       const res = await fetch(projectDetailApiUrl, {
+        credentials: "include",
+
         method: "DELETE",
       });
 
@@ -173,10 +190,10 @@ export default function ProjectDetailPage() {
       hasError = true;
     }
 
-    if (!description.trim()) {
-      setDescriptionError("概要を入力してください");
-      hasError = true;
-    }
+    // if (!description.trim()) {
+    //   setDescriptionError("概要を入力してください");
+    //   hasError = true;
+    // }
     if (!taskDueDate) {
       setTaskDueDateError("締切日を入力してください");
       hasError = true;
@@ -187,6 +204,7 @@ export default function ProjectDetailPage() {
     try {
       const res = await fetch(`${API_BASE_URL}/projects/${projectId}/tasks`, {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -194,8 +212,8 @@ export default function ProjectDetailPage() {
           name: taskName,
           description: description,
           due_date: taskDueDate,
-
           status: "not_started",
+          user_id: taskAssigneeId,
         }),
       });
 
@@ -233,6 +251,7 @@ export default function ProjectDetailPage() {
 
     setEditTaskDescription(task.description ?? "");
     setEditTaskDueDate(task.due_date ?? "");
+    setTaskAssigneeId(task.user_id ?? "");
     // setEditTaskError(null);
     // setEditTaskNameError(null);
     // setEditTaskDueDateError(null);
@@ -608,8 +627,10 @@ export default function ProjectDetailPage() {
           <div className="modalOverlay" onClick={closeAddTaskModal}>
             <div className="modal" onClick={(e) => e.stopPropagation()}>
               <h2 className="modalTitle">タスク追加</h2>
+
               <form className="modalForm" onSubmit={handleAddTask}>
                 {addTaskError && <p className="modalError">{addTaskError}</p>}
+
                 <div className="modalField">
                   <label htmlFor="taskName">タスク名</label>
                   <input
@@ -620,6 +641,7 @@ export default function ProjectDetailPage() {
                     onChange={(e) => setTaskName(e.target.value)}
                   />
                 </div>
+
                 {taskNameError && <p className="fieldError">{taskNameError}</p>}
 
                 <div className="formGroup">
@@ -642,14 +664,34 @@ export default function ProjectDetailPage() {
                     onChange={(e) => setTaskDueDate(e.target.value)}
                   />
                 </div>
+
                 {taskDueDateError && (
                   <p className="fieldError">{taskDueDateError}</p>
                 )}
+
+                {/* ここを追加 */}
+                <div className="modalField">
+                  <label htmlFor="taskAssignee">担当者</label>
+                  <select
+                    id="taskAssignee"
+                    value={taskAssigneeId}
+                    onChange={(e) => setTaskAssigneeId(e.target.value)}
+                  >
+                    <option value="">担当者を選択</option>
+
+                    {project?.users?.map((user) => (
+                      <option key={user.id} value={user.id}>
+                        {user.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
                 <div className="modalActions">
                   <button type="button" onClick={closeAddTaskModal}>
                     キャンセル
                   </button>
+
                   <button type="submit">追加</button>
                 </div>
               </form>
@@ -730,7 +772,9 @@ export default function ProjectDetailPage() {
                         : "—"}
                     </td>
 
-                    <td className="taskAssigneeCell">—</td>
+                    <td className="taskAssigneeCell">
+                      {project.users?.[0]?.name ?? "—"}
+                    </td>
 
                     <td className="taskActionCell">
                       <button
